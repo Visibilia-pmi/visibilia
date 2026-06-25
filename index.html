@@ -1320,11 +1320,7 @@ window.handleFile=async function(input){
       var html=data.analysis
         .replace(/## (.+)/g,'<h2>$1</h2>')
         .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-        .replace(/
-
-/g,'</p><p>')
-        .replace(/
-/g,'<br>');
+        .replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
       document.getElementById('vanalyze-result-text').innerHTML='<p>'+html+'</p>';
     } else {
       document.getElementById('vanalyze-result-text').textContent='Errore nell'analisi. Riprova con un file CSV o Excel diverso.';
