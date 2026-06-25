@@ -1323,12 +1323,12 @@ window.handleFile=async function(input){
         .replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>');
       document.getElementById('vanalyze-result-text').innerHTML='<p>'+html+'</p>';
     } else {
-      document.getElementById('vanalyze-result-text').textContent='Errore nell'analisi. Riprova con un file CSV o Excel diverso.';
+      document.getElementById("vanalyze-result-text").textContent="Errore analisi. Riprova o contattaci.";
     }
   }catch(e){
     document.getElementById('vanalyze-loading').style.display='none';
     document.getElementById('vanalyze-result').style.display='block';
-    document.getElementById('vanalyze-result-text').textContent='Errore di connessione. Riprova o contattaci a visibilia.dashboardpmi@outlook.it';
+    document.getElementById("vanalyze-result-text").textContent="Errore di connessione. Contattaci a visibilia.dashboardpmi@outlook.it";
   }
 };
 
