@@ -1,4 +1,6 @@
 [build]
+  command = "echo 'build complete'"
+  publish = "."
   functions = "Netlify/functions"
 
 [functions]
