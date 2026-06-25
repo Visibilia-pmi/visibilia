@@ -1117,12 +1117,12 @@ body { font-family:'Space Grotesk',sans-serif; background:var(--bg); color:var(-
 </style>
 
 <!-- CHATBOT BUTTON -->
-<button id="vbot-btn" onclick="toggleVbot()" title="Chatta con Visibilia AI">
+<button id="vbot-btn" onclick="window.toggleVbot()" title="Chatta con Visibilia AI">
   👁️<span id="vbot-pulse"></span>
 </button>
 
 <!-- ANALISI BUTTON -->
-<button id="vanalyze-btn" onclick="openAnalyze()">
+<button id="vanalyze-btn" onclick="window.openAnalyze()">
   📊 Analizza i tuoi dati
 </button>
 
@@ -1136,18 +1136,18 @@ body { font-family:'Space Grotesk',sans-serif; background:var(--bg); color:var(-
         <div id="vbot-head-status">Online — risponde subito</div>
       </div>
     </div>
-    <button id="vbot-x" onclick="toggleVbot()">✕</button>
+    <button id="vbot-x" onclick="window.toggleVbot()">✕</button>
   </div>
   <div id="vbot-msgs"></div>
   <div id="vbot-sugs">
-    <button class="vb-sug" onclick="sendSug(this)">Ho un ristorante 🍽</button>
-    <button class="vb-sug" onclick="sendSug(this)">Gestisco una fabbrica 🏭</button>
-    <button class="vb-sug" onclick="sendSug(this)">Rete commerciale 💼</button>
-    <button class="vb-sug" onclick="sendSug(this)">Quanto costa? 💶</button>
+    <button class="vb-sug" onclick="window.sendSug(this)">Ho un ristorante 🍽</button>
+    <button class="vb-sug" onclick="window.sendSug(this)">Gestisco una fabbrica 🏭</button>
+    <button class="vb-sug" onclick="window.sendSug(this)">Rete commerciale 💼</button>
+    <button class="vb-sug" onclick="window.sendSug(this)">Quanto costa? 💶</button>
   </div>
   <div id="vbot-inp-row">
-    <input id="vbot-inp" type="text" placeholder="Descrivi la tua azienda..." onkeydown="if(event.key==='Enter')sendVbot()">
-    <button id="vbot-send" onclick="sendVbot()">➤</button>
+    <input id="vbot-inp" type="text" placeholder="Descrivi la tua azienda..." onkeydown="if(event.key==='Enter')window.sendVbot()">
+    <button id="vbot-send" onclick="window.sendVbot()">➤</button>
   </div>
 </div>
 
@@ -1156,7 +1156,7 @@ body { font-family:'Space Grotesk',sans-serif; background:var(--bg); color:var(-
   <div id="vanalyze-box">
     <div id="vanalyze-head">
       <div id="vanalyze-title">📊 Analisi Dati con IA — carica il tuo Excel</div>
-      <button id="vanalyze-x" onclick="closeAnalyze()">✕</button>
+      <button id="vanalyze-x" onclick="window.closeAnalyze()">✕</button>
     </div>
     <div id="vanalyze-body">
       <div id="vanalyze-upload" onclick="document.getElementById('va-file-input').click()">
@@ -1182,8 +1182,8 @@ body { font-family:'Space Grotesk',sans-serif; background:var(--bg); color:var(-
       </div>
     </div>
     <div id="vanalyze-foot">
-      <button class="va-btn secondary" onclick="closeAnalyze()">Chiudi</button>
-      <button class="va-btn primary" id="va-new-btn" onclick="resetAnalyze()" style="display:none;">📁 Analizza altro file</button>
+      <button class="va-btn secondary" onclick="window.closeAnalyze()">Chiudi</button>
+      <button class="va-btn primary" id="va-new-btn" onclick="window.resetAnalyze()" style="display:none;">📁 Analizza altro file</button>
     </div>
   </div>
 </div>
