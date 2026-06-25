@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produzione & OEE — Visibilia</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#1a1a2e;--ink-soft:#4a4a6a;--ink-muted:#8888aa;
+  --bg:#f7f7fb;--surface:#fff;--border:#e8e8f0;
+  --green:#00b894;--green-bg:#e8faf6;
+  --red:#e17055;--red-bg:#fdf0ec;
+  --amber:#fdcb6e;--amber-bg:#fef9ec;
+  --blue:#0984e3;--blue-bg:#e8f4fd;
+  --accent:#6c63ff;--accent-bg:#f0effe;
+  --orange:#e67e22;--orange-bg:#fef3e8;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;padding-top:52px;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.v-nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(8,8,8,.97);backdrop-filter:blur(12px);height:52px;display:flex;align-items:center;padding:0 16px;gap:6px;border-bottom:1px solid rgba(255,255,255,.07);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.v-brand{display:flex;align-items:center;gap:8px;margin-right:10px;flex-shrink:0;text-decoration:none;}
+.v-brand-name{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:white;letter-spacing:.06em;}
+.v-sep{width:1px;height:20px;background:rgba(255,255,255,.1);margin:0 4px;flex-shrink:0;}
+.v-btn{padding:5px 13px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;font-size:12px;font-family:'Inter',sans-serif;color:rgba(255,255,255,.5);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;text-decoration:none;display:inline-flex;align-items:center;}
+.v-btn:hover{color:white;border-color:rgba(255,255,255,.3);}
+.v-btn.active{background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.25);}
+
+.header{background:var(--ink);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;}
+.live-badge{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);font-weight:500;}
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+
+.main{max-width:1280px;margin:0 auto;padding:28px 32px 48px;}
+.page-title{font-family:'DM Serif Display',serif;font-size:28px;color:var(--ink);line-height:1.2;margin-bottom:4px;}
+.demo-banner{background:var(--orange-bg);border:1px solid #f5cba7;border-radius:8px;padding:10px 16px;margin-bottom:24px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--orange);}
+
+.controls-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+.controls-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.ctrl-label{font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em;margin-right:4px;}
+.period-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;transition:all .15s;}
+.period-btn.active{background:var(--ink);color:white;border-color:var(--ink);}
+.linea-select{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;outline:none;}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 16px 14px;position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s;animation:fadeIn .3s ease;}
+.kpi-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.07);transform:translateY(-1px);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi-card.green::before{background:var(--green);}
+.kpi-card.red::before{background:var(--red);}
+.kpi-card.amber::before{background:var(--amber);}
+.kpi-card.blue::before{background:var(--blue);}
+.kpi-card.accent::before{background:var(--accent);}
+.kpi-card.orange::before{background:var(--orange);}
+.kpi-label{font-size:10px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.kpi-value{font-size:26px;font-weight:600;color:var(--ink);line-height:1;margin-bottom:6px;letter-spacing:-.02em;}
+.kpi-value sup{font-size:13px;font-weight:400;color:var(--ink-soft);vertical-align:super;}
+.kpi-delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;padding:2px 7px;border-radius:8px;}
+.kpi-delta.up{color:var(--green);background:var(--green-bg);}
+.kpi-delta.down{color:var(--red);background:var(--red-bg);}
+.kpi-delta.warn{color:#c69a00;background:var(--amber-bg);}
+
+.grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:box-shadow .2s;animation:fadeIn .3s ease;}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
+.card-title{font-size:13px;font-weight:600;color:var(--ink);}
+.card-sub{font-size:11px;color:var(--ink-muted);margin-top:2px;}
+.card-badge{font-size:11px;padding:3px 9px;border-radius:8px;font-weight:500;white-space:nowrap;}
+.card-badge.green{background:var(--green-bg);color:var(--green);}
+.card-badge.red{background:var(--red-bg);color:var(--red);}
+.card-badge.amber{background:var(--amber-bg);color:#c69a00;}
+.card-badge.blue{background:var(--blue-bg);color:var(--blue);}
+.card-badge.orange{background:var(--orange-bg);color:var(--orange);}
+
+.oee-big{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0;}
+.oee-circle{position:relative;width:140px;height:140px;margin-bottom:12px;}
+.oee-circle svg{transform:rotate(-90deg);}
+.oee-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.oee-num-val{font-size:32px;font-weight:700;color:var(--ink);letter-spacing:-.02em;}
+.oee-num-label{font-size:11px;color:var(--ink-muted);margin-top:2px;}
+.oee-components{display:flex;gap:16px;justify-content:center;margin-top:4px;}
+.oee-comp{text-align:center;}
+.oee-comp-val{font-size:16px;font-weight:600;}
+
+.bar-chart{display:flex;flex-direction:column;gap:10px;}
+.bar-row{display:flex;align-items:center;gap:10px;}
+.bar-label{font-size:11px;color:var(--ink-muted);width:32px;flex-shrink:0;}
+.bar-track{flex:1;height:20px;background:#f0f0f8;border-radius:4px;position:relative;overflow:hidden;}
+.bar-val{font-size:11px;font-weight:500;width:44px;text-align:right;flex-shrink:0;}
+
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);padding:0 0 10px;text-align:left;border-bottom:1px solid var(--border);}
+.data-table th:not(:first-child){text-align:right;}
+.data-table td{padding:9px 0;border-bottom:1px solid var(--bg);font-size:12px;color:var(--ink);}
+.data-table td:not(:first-child){text-align:right;}
+.data-table tr:last-child td{border-bottom:none;}
+
+.alerts{display:flex;flex-direction:column;gap:8px;}
+.alert-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;font-size:12px;}
+.alert-item.warn{background:var(--amber-bg);}
+.alert-item.danger{background:var(--red-bg);}
+.alert-item.ok{background:var(--green-bg);}
+.alert-item.info{background:var(--blue-bg);}
+.alert-text{color:var(--ink-soft);line-height:1.4;}
+.alert-text strong{color:var(--ink);font-weight:600;}
+
+.linee-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.linea-card{padding:14px;border-radius:10px;border:1px solid var(--border);}
+.linea-status{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.status-dot{width:8px;height:8px;border-radius:50%;}
+.status-running{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
+.status-maintenance{background:var(--amber);}
+.linea-name{font-size:12px;font-weight:600;color:var(--ink);}
+.linea-oee{font-size:22px;font-weight:700;letter-spacing:-.02em;}
+.linea-detail{font-size:11px;color:var(--ink-muted);margin-top:2px;}
+
+.heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.heatmap-cell{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:white;cursor:default;transition:transform .15s;}
+.heatmap-cell:hover{transform:scale(1.15);}
+.hm-header{font-size:10px;color:var(--ink-muted);text-align:center;padding-bottom:4px;}
+
+.progress-track{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:5px;}
+.progress-fill{height:100%;border-radius:3px;transition:width .6s;}
+
+.dash-footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.footer-brand{font-size:12px;color:var(--ink-muted);}
+.footer-brand strong{color:var(--accent);font-weight:600;}
+
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .grid-2-1,.grid-3,.grid-2,.linee-grid{grid-template-columns:1fr;}
+  .main{padding:20px 16px 40px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="v-nav">
+  <a class="v-brand" href="index.html">
+    <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+      <rect width="64" height="64" rx="15" fill="#0f2912"/>
+      <path d="M5 32 C12 18, 52 18, 59 32 C52 46, 12 46, 5 32Z" stroke="#4caf6a" stroke-width="2.5" fill="none" opacity=".5"/>
+      <circle cx="32" cy="32" r="10" stroke="#4caf6a" stroke-width="2" fill="none" opacity=".3"/>
+      <circle cx="32" cy="32" r="4.5" fill="#f5d060"/>
+      <circle cx="29" cy="29" r="1.5" fill="white" opacity=".5"/>
+    </svg>
+    <span class="v-brand-name">VISIBILIA</span>
+  </a>
+  <div class="v-sep"></div>
+  <a class="v-btn" href="dashboard-pmi.html">📈 Direzione</a>
+  <a class="v-btn active" href="dashboard-produzione.html">🏭 Produzione</a>
+  <a class="v-btn" href="dashboard-horeca.html">🍽 HORECA</a>
+  <a class="v-btn" href="dashboard-commerciale.html">💼 Commerciale</a>
+  <a class="v-btn" href="index.html">🏠 Home</a>
+</nav>
+
+<main class="main">
+  <div class="demo-banner">🏭 <span><strong>Demo interattiva</strong> — Cambia linea e periodo per esplorare i dati di produzione.</span></div>
+  <h1 class="page-title">Produzione &amp; OEE</h1>
+  <p style="font-size:13px;color:var(--ink-muted);margin-bottom:20px;" id="page-sub">Stabilimento Catania — tutte le linee</p>
+
+  <div class="controls-bar">
+    <div class="controls-left">
+      <span class="ctrl-label">Periodo:</span>
+      <button class="period-btn active" onclick="setPeriod('oggi',this)">Oggi</button>
+      <button class="period-btn" onclick="setPeriod('settimana',this)">Settimana</button>
+      <button class="period-btn" onclick="setPeriod('mese',this)">Mese</button>
+      <button class="period-btn" onclick="setPeriod('trimestre',this)">Trimestre</button>
+      <span class="ctrl-label" style="margin-left:16px;">Linea:</span>
+      <select class="linea-select" onchange="setLinea(this.value)">
+        <option value="all">Tutte le linee</option>
+        <option value="L1">Linea 1 — Imbottigliamento</option>
+        <option value="L2">Linea 2 — Soffiatrice</option>
+        <option value="L3">Linea 3 — Confezionamento</option>
+      </select>
+    </div>
+    <div style="font-size:12px;color:var(--ink-muted);">Aggiornamento: <strong style="color:var(--ink);" id="last-update">--:--</strong></div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card green"><div class="kpi-label">OEE Globale</div><div class="kpi-value" id="kpi-oee">—<sup>%</sup></div><span class="kpi-delta" id="delta-oee">—</span><div class="kpi-compare" id="comp-oee">—</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">Disponibilità</div><div class="kpi-value" id="kpi-disp">—<sup>%</sup></div><span class="kpi-delta" id="delta-disp">—</span><div class="kpi-compare">tempo produzione / pianificato</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">Performance</div><div class="kpi-value" id="kpi-perf">—<sup>%</sup></div><span class="kpi-delta" id="delta-perf">—</span><div class="kpi-compare">velocità reale / nominale</div></div>
+    <div class="kpi-card amber"><div class="kpi-label">Qualità</div><div class="kpi-value" id="kpi-qual">—<sup>%</sup></div><span class="kpi-delta" id="delta-qual">—</span><div class="kpi-compare">pezzi OK / totale</div></div>
+    <div class="kpi-card red"><div class="kpi-label">Scarti</div><div class="kpi-value" id="kpi-scarti">—<sup>%</sup></div><span class="kpi-delta" id="delta-scarti">—</span><div class="kpi-compare">target: &lt;2%</div></div>
+  </div>
+
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Trend OEE</div><div class="card-sub" id="trend-sub">Andamento periodo</div></div><span class="card-badge" id="badge-oee">—</span></div>
+      <div class="bar-chart" id="oee-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">OEE Composito</div><div class="card-sub">Disponibilità × Performance × Qualità</div></div></div>
+      <div class="oee-big">
+        <div class="oee-circle">
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="58" fill="none" stroke="#e8e8f0" stroke-width="14"/>
+            <circle id="oee-arc" cx="70" cy="70" r="58" fill="none" stroke="#00b894" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 364.4"/>
+          </svg>
+          <div class="oee-num"><div class="oee-num-val" id="oee-big">—</div><div class="oee-num-label">OEE</div></div>
+        </div>
+        <div class="oee-components">
+          <div class="oee-comp"><div class="oee-comp-val" id="c-d" style="color:var(--blue);">—</div><div style="font-size:10px;color:var(--ink-muted);">Disponib.</div></div>
+          <div class="oee-comp"><div style="font-size:20px;color:var(--ink-muted);margin-top:2px;">×</div></div>
+          <div class="oee-comp"><div class="oee-comp-val" id="c-p" style="color:var(--accent);">—</div><div style="font-size:10px;color:var(--ink-muted);">Perform.</div></div>
+          <div class="oee-comp"><div style="font-size:20px;color:var(--ink-muted);margin-top:2px;">×</div></div>
+          <div class="oee-comp"><div class="oee-comp-val" id="c-q" style="color:var(--amber);">—</div><div style="font-size:10px;color:var(--ink-muted);">Qualità</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header"><div><div class="card-title">Stato Linee in Tempo Reale</div><div class="card-sub">Performance live per linea produttiva</div></div><span class="card-badge green">2 attive · 1 manutenzione</span></div>
+    <div class="linee-grid" id="linee-grid"></div>
+  </div>
+
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Cause Fermo Macchina</div><div class="card-sub">Top cause downtime — ore perse</div></div><span class="card-badge red" id="badge-dt">—</span></div>
+      <div class="bar-chart" id="dt-chart"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px;" id="dt-summary"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Alert Produzione</div><div class="card-sub">Situazioni attive</div></div></div>
+      <div class="alerts" id="prod-alerts"></div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Scarti per Causa</div><div class="card-sub">% sul totale prodotto</div></div><span class="card-badge amber" id="badge-sc">—</span></div>
+      <div class="bar-chart" id="scarti-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Produttività Oraria</div><div class="card-sub">Pezzi/ora — ultime 8 ore</div></div><span class="card-badge blue" id="badge-prod">—</span></div>
+      <div style="display:flex;align-items:flex-end;gap:4px;height:48px;margin-bottom:12px;" id="prod-chart"></div>
+      <div style="padding:10px 12px;background:var(--accent-bg);border-radius:8px;" id="prod-insight"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Heatmap OEE</div><div class="card-sub">Performance per giorno</div></div></div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;">
+        <div class="hm-header">Lun</div><div class="hm-header">Mar</div><div class="hm-header">Mer</div><div class="hm-header">Gio</div><div class="hm-header">Ven</div><div class="hm-header">Sab</div><div class="hm-header">Dom</div>
+      </div>
+      <div class="heatmap" id="heatmap"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:12px;justify-content:center;flex-wrap:wrap;">
+        <div style="width:10px;height:10px;background:#fdf0ec;border-radius:2px;border:1px solid #e8e8f0;"></div><span style="font-size:10px;color:var(--ink-muted);">&lt;60%</span>
+        <div style="width:10px;height:10px;background:#fef9ec;border-radius:2px;"></div><span style="font-size:10px;color:var(--ink-muted);">60–75%</span>
+        <div style="width:10px;height:10px;background:#e8faf6;border-radius:2px;"></div><span style="font-size:10px;color:var(--ink-muted);">75–85%</span>
+        <div style="width:10px;height:10px;background:#00b894;border-radius:2px;"></div><span style="font-size:10px;color:var(--ink-muted);">&gt;85%</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-header"><div><div class="card-title">Costi Industriali</div><div class="card-sub">Ripartizione costi di produzione</div></div><span class="card-badge orange" id="badge-ci">—</span></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;" id="costi-grid"></div>
+  </div>
+
+  <div class="dash-footer">
+    <div class="footer-brand">Powered by <strong>Visibilia</strong></div>
+    <div style="font-size:11px;color:var(--ink-muted);font-style:italic;">Collegabile a PLC, MES, ERP · visibilia.dashboardpmi@outlook.it</div>
+  </div>
+</main>
+
+<script>
+var DATA = {
+  all:{
+    oggi:{oee:74,disp:88,perf:86,qual:97,scarti:2.8,dtH:3.2,prodH:1840,label:'Oggi'},
+    settimana:{oee:77,disp:90,perf:87,qual:98,scarti:2.1,dtH:18.4,prodH:1920,label:'Settimana'},
+    mese:{oee:72,disp:86,perf:85,qual:96,scarti:3.4,dtH:84.6,prodH:1780,label:'Mese'},
+    trimestre:{oee:75,disp:88,perf:86,qual:97,scarti:2.9,dtH:310,prodH:1870,label:'Trimestre'}
+  },
+  L1:{
+    oggi:{oee:81,disp:93,perf:89,qual:98,scarti:1.8,dtH:1.4,prodH:2100,label:'Oggi'},
+    settimana:{oee:83,disp:94,perf:90,qual:98,scarti:1.6,dtH:7.2,prodH:2140,label:'Settimana'},
+    mese:{oee:79,disp:91,perf:88,qual:98,scarti:2.0,dtH:38.4,prodH:2080,label:'Mese'},
+    trimestre:{oee:82,disp:93,perf:89,qual:98,scarti:1.7,dtH:128,prodH:2110,label:'Trimestre'}
+  },
+  L2:{
+    oggi:{oee:68,disp:82,perf:84,qual:96,scarti:3.9,dtH:1.8,prodH:1620,label:'Oggi'},
+    settimana:{oee:71,disp:85,perf:85,qual:97,scarti:3.2,dtH:9.8,prodH:1680,label:'Settimana'},
+    mese:{oee:65,disp:80,perf:83,qual:96,scarti:4.1,dtH:46.2,prodH:1540,label:'Mese'},
+    trimestre:{oee:69,disp:83,perf:84,qual:96,scarti:3.7,dtH:174,prodH:1650,label:'Trimestre'}
+  },
+  L3:{
+    oggi:{oee:0,disp:0,perf:0,qual:0,scarti:0,dtH:8,prodH:0,label:'Oggi — Manutenzione'},
+    settimana:{oee:58,disp:72,perf:82,qual:96,scarti:4.8,dtH:28.6,prodH:1420,label:'Settimana'},
+    mese:{oee:61,disp:75,perf:83,qual:96,scarti:4.4,dtH:112,prodH:1490,label:'Mese'},
+    trimestre:{oee:60,disp:74,perf:82,qual:96,scarti:4.6,dtH:398,prodH:1460,label:'Trimestre'}
+  }
+};
+var TREND = {
+  all:{
+    oggi:{labels:['6','7','8','9','10','11','12','13','14','15','16','17'],vals:[68,71,74,72,78,76,80,74,71,69,73,75]},
+    settimana:{labels:['Lun','Mar','Mer','Gio','Ven','Sab','Dom'],vals:[72,75,78,74,76,71,69]},
+    mese:{labels:['S1','S2','S3','S4'],vals:[70,73,72,75]},
+    trimestre:{labels:['Gen','Feb','Mar'],vals:[71,74,75]}
+  },
+  L1:{
+    oggi:{labels:['6','7','8','9','10','11','12','13','14','15','16','17'],vals:[78,80,82,84,85,83,86,81,79,80,82,84]},
+    settimana:{labels:['Lun','Mar','Mer','Gio','Ven','Sab','Dom'],vals:[80,82,84,81,83,79,77]},
+    mese:{labels:['S1','S2','S3','S4'],vals:[77,80,79,82]},
+    trimestre:{labels:['Gen','Feb','Mar'],vals:[79,81,83]}
+  },
+  L2:{
+    oggi:{labels:['6','7','8','9','10','11','12','13','14','15','16','17'],vals:[62,65,68,70,72,69,71,66,64,67,69,70]},
+    settimana:{labels:['Lun','Mar','Mer','Gio','Ven','Sab','Dom'],vals:[68,71,72,70,69,65,62]},
+    mese:{labels:['S1','S2','S3','S4'],vals:[63,66,65,68]},
+    trimestre:{labels:['Gen','Feb','Mar'],vals:[65,68,70]}
+  },
+  L3:{
+    oggi:{labels:['6','8','10'],vals:[0,0,0]},
+    settimana:{labels:['Lun','Mar','Mer','Gio','Ven','Sab','Dom'],vals:[0,55,60,62,58,56,0]},
+    mese:{labels:['S1','S2','S3','S4'],vals:[58,62,61,60]},
+    trimestre:{labels:['Gen','Feb','Mar'],vals:[57,60,62]}
+  }
+};
+
+var curPeriod='oggi', curLinea='all';
+
+function setKPI(key,val,unit,cls,delta,compare){
+  var ve=document.getElementById('kpi-'+key); if(ve) ve.innerHTML=val+(unit?'<sup>'+unit+'</sup>':'');
+  var de=document.getElementById('delta-'+key); if(de){de.textContent=delta;de.className='kpi-delta '+cls;}
+  var ce=document.getElementById('comp-'+key); if(ce) ce.textContent=compare||'';
+}
+
+function render(){
+  var d=(DATA[curLinea]||DATA.all)[curPeriod];
+  var t=(TREND[curLinea]||TREND.all)[curPeriod];
+  if(!d) return;
+
+  var lineaLabel={all:'Tutte le linee',L1:'Linea 1 — Imbottigliamento',L2:'Linea 2 — Soffiatrice',L3:'Linea 3 — Confezionamento'}[curLinea];
+  document.getElementById('page-sub').textContent='Stabilimento Catania — '+lineaLabel;
+
+  var oeeCol=d.oee>=85?'var(--green)':d.oee>=70?'var(--amber)':'var(--red)';
+  setKPI('oee',d.oee,'%',d.oee>=85?'up':d.oee>=70?'warn':'down',d.oee>=85?'↑ World class':'⚠ Sotto target',d.oee>=85?'Target: 85%':'Target: 85%');
+  setKPI('disp',d.disp,'%',d.disp>=90?'up':'warn',d.disp>=90?'↑ Ottimo':'⚠ Migliorabile','target: 90%');
+  setKPI('perf',d.perf,'%',d.perf>=90?'up':'warn',d.perf>=90?'↑ Ottimo':'⚠ Sotto target','target: 90%');
+  setKPI('qual',d.qual,'%',d.qual>=98?'up':'warn',d.qual>=98?'↑ Eccellente':'⚠ Verificare','target: 98%');
+  setKPI('scarti',d.scarti,'%',d.scarti<=2?'up':'down',d.scarti<=2?'↓ Sotto target':'↑ Sopra target','target: <2%');
+
+  // OEE Arc
+  var circ=2*Math.PI*58, arc=(d.oee/100)*circ;
+  document.getElementById('oee-arc').setAttribute('stroke-dasharray',arc.toFixed(1)+' '+(circ-arc).toFixed(1));
+  document.getElementById('oee-arc').setAttribute('stroke',oeeCol);
+  document.getElementById('oee-big').textContent=d.oee+'%';
+  document.getElementById('oee-big').style.color=oeeCol;
+  document.getElementById('c-d').textContent=d.disp+'%';
+  document.getElementById('c-p').textContent=d.perf+'%';
+  document.getElementById('c-q').textContent=d.qual+'%';
+
+  // Trend chart
+  var maxT=Math.max.apply(null,t.vals.concat([100]));
+  var tc=document.getElementById('oee-chart'); tc.innerHTML='';
+  t.labels.forEach(function(l,i){
+    var v=t.vals[i], pct=(v/maxT*100).toFixed(0);
+    var col=v>=85?'#00b894':v>=70?'#6c63ff':'#e17055';
+    tc.innerHTML+='<div class="bar-row"><span class="bar-label">'+l+'</span><div class="bar-track"><div style="position:absolute;top:6px;left:0;height:8px;width:'+pct+'%;background:'+col+';border-radius:4px;transition:width .6s;"></div><div style="position:absolute;top:6px;left:'+(85/maxT*100)+'%;height:8px;width:2px;background:rgba(0,0,0,.15);"></div></div><span class="bar-val" style="color:'+col+';">'+v+'%</span></div>';
+  });
+  var avgOee=Math.round(t.vals.reduce(function(a,b){return a+b;},0)/t.vals.length);
+  var bEl=document.getElementById('badge-oee');
+  bEl.textContent='Media: '+avgOee+'%';
+  bEl.className='card-badge '+(avgOee>=85?'green':avgOee>=70?'amber':'red');
+  document.getElementById('trend-sub').textContent='OEE per '+d.label.toLowerCase()+' — linea = target 85%';
+
+  // Linee
+  var linee=[
+    {id:'L1',name:'L1 — Imbottigliamento',status:'running',oee:81,vel:'2.100 pz/h',note:'Turno A — in target'},
+    {id:'L2',name:'L2 — Soffiatrice',status:'running',oee:68,vel:'1.620 pz/h',note:'Performance sotto target'},
+    {id:'L3',name:'L3 — Confezionamento',status:'maintenance',oee:0,vel:'—',note:'Manutenzione programmata'}
+  ];
+  document.getElementById('linee-grid').innerHTML=linee.map(function(l){
+    var col=l.status==='running'?(l.oee>=80?'var(--green)':'var(--amber)'):l.status==='maintenance'?'var(--amber)':'var(--red)';
+    var bg=l.status==='running'?(l.oee>=80?'var(--green-bg)':'var(--amber-bg)'):'var(--amber-bg)';
+    var sl={running:'In produzione',stopped:'Fermo',maintenance:'Manutenzione'}[l.status];
+    return '<div class="linea-card" style="background:'+bg+';"><div class="linea-status"><div class="status-dot status-'+l.status+'"></div><span style="font-size:11px;font-weight:500;color:'+col+';">'+sl+'</span></div><div class="linea-name">'+l.name+'</div><div class="linea-oee" style="color:'+col+';">'+(l.oee>0?l.oee+'%':'—')+'</div><div class="linea-detail">'+l.vel+' · '+l.note+'</div></div>';
+  }).join('');
+
+  // Downtime
+  var dtCause=[
+    {label:'Guasto meccanico',h:+(d.dtH*0.35).toFixed(1)},
+    {label:'Cambio formato',h:+(d.dtH*0.25).toFixed(1)},
+    {label:'Mancanza materiale',h:+(d.dtH*0.18).toFixed(1)},
+    {label:'Setup / pulizia',h:+(d.dtH*0.12).toFixed(1)},
+    {label:'Micro-fermi',h:+(d.dtH*0.10).toFixed(1)}
+  ];
+  var maxDT=dtCause[0].h;
+  var dtC=document.getElementById('dt-chart'); dtC.innerHTML='';
+  dtCause.forEach(function(c){
+    var pct=maxDT>0?(c.h/maxDT*100).toFixed(0):0;
+    dtC.innerHTML+='<div class="bar-row"><span class="bar-label" style="width:120px;font-size:11px;color:var(--ink-soft);">'+c.label+'</span><div class="bar-track"><div style="position:absolute;top:6px;left:0;height:8px;width:'+pct+'%;background:var(--red);border-radius:4px;opacity:.75;transition:width .6s;"></div></div><span class="bar-val">'+c.h+'h</span></div>';
+  });
+  document.getElementById('badge-dt').textContent=d.dtH+'h perse';
+  document.getElementById('dt-summary').innerHTML=
+    '<div style="text-align:center;padding:10px;background:var(--red-bg);border-radius:8px;"><div style="font-size:16px;font-weight:700;color:var(--red);">'+d.dtH+'h</div><div style="font-size:10px;color:var(--ink-muted);margin-top:2px;">Totale fermo</div></div>'+
+    '<div style="text-align:center;padding:10px;background:var(--amber-bg);border-radius:8px;"><div style="font-size:16px;font-weight:700;color:#c69a00;">'+(d.dtH*0.35).toFixed(1)+'h</div><div style="font-size:10px;color:var(--ink-muted);margin-top:2px;">Guasti</div></div>'+
+    '<div style="text-align:center;padding:10px;background:var(--blue-bg);border-radius:8px;"><div style="font-size:16px;font-weight:700;color:var(--blue);">'+(d.dtH*0.25).toFixed(1)+'h</div><div style="font-size:10px;color:var(--ink-muted);margin-top:2px;">Setup</div></div>';
+
+  // Alerts
+  document.getElementById('prod-alerts').innerHTML=[
+    d.oee<70?'<div class="alert-item danger"><span>🚨</span><div class="alert-text"><strong>OEE critico</strong> sotto il 70%. Intervento immediato richiesto.</div></div>':'',
+    d.scarti>3?'<div class="alert-item danger"><span>♻️</span><div class="alert-text"><strong>Scarti elevati</strong> oltre soglia del 3%. Verificare parametri linea.</div></div>':'',
+    d.disp<85?'<div class="alert-item warn"><span>⏱️</span><div class="alert-text"><strong>Disponibilità bassa</strong>. Fermi non pianificati in aumento.</div></div>':'',
+    (curLinea==='L3'||curLinea==='all')?'<div class="alert-item warn"><span>🔧</span><div class="alert-text"><strong>L3 in manutenzione</strong>. Rientro previsto ore 18:00.</div></div>':'',
+    d.oee>=80?'<div class="alert-item ok"><span>✅</span><div class="alert-text"><strong>Performance in target</strong>. OEE sopra la soglia obiettivo.</div></div>':'',
+    '<div class="alert-item info"><span>📋</span><div class="alert-text"><strong>Cambio turno</strong> ore 14:00. Briefing con Capoturno B.</div></div>'
+  ].filter(Boolean).slice(0,4).join('');
+
+  // Scarti
+  var sCause=['Difetti estetici','Peso fuori spec.','Contaminazione','Chiusura errata','Etichette difettose'];
+  var sVals=[38,24,16,13,9].map(function(v){return (v*d.scarti/100).toFixed(2);});
+  var maxS=Math.max.apply(null,sVals.map(Number));
+  var sc=document.getElementById('scarti-chart'); sc.innerHTML='';
+  sCause.forEach(function(c,i){
+    var pct=maxS>0?(sVals[i]/maxS*100).toFixed(0):0;
+    var col=i===0?'var(--red)':i===1?'var(--orange)':'var(--amber)';
+    sc.innerHTML+='<div class="bar-row"><span class="bar-label" style="width:110px;font-size:11px;color:var(--ink-soft);">'+c+'</span><div class="bar-track"><div style="position:absolute;top:6px;left:0;height:8px;width:'+pct+'%;background:'+col+';border-radius:4px;opacity:.8;transition:width .6s;"></div></div><span class="bar-val">'+sVals[i]+'%</span></div>';
+  });
+  document.getElementById('badge-sc').textContent=d.scarti+'% totale';
+
+  // Produttività
+  var baseH=d.prodH;
+  var ore8=Array.from({length:8},function(){return Math.round(baseH*(0.85+Math.random()*0.3));});
+  var maxO=Math.max.apply(null,ore8);
+  var pc=document.getElementById('prod-chart'); pc.innerHTML='';
+  ore8.forEach(function(v,i){
+    var h=(v/maxO*100).toFixed(0), isLast=i===ore8.length-1;
+    var col=v>=baseH*0.9?'var(--blue)':'var(--amber)';
+    pc.innerHTML+='<div style="flex:1;height:'+h+'%;background:'+(isLast?'var(--blue)':col)+';opacity:'+(isLast?1:.5)+';border-radius:3px 3px 0 0;" title="'+v+' pz/h"></div>';
+  });
+  document.getElementById('badge-prod').textContent=ore8[ore8.length-1]+' pz/h';
+  document.getElementById('prod-insight').innerHTML='<div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:3px;">💡 Insight</div><div style="font-size:12px;color:var(--ink-soft);line-height:1.5;">Media ultima ora: <strong style="color:var(--ink)">'+ore8[ore8.length-1]+' pz/h</strong>. '+(ore8[ore8.length-1]>=baseH?'In linea con il target.':'Leggermente sotto target.')+'</div>';
+
+  // Heatmap
+  var heatVals=[82,78,85,74,80,65,null,79,83,87,71,76,68,null];
+  var hm=document.getElementById('heatmap'); hm.innerHTML='';
+  for(var i=0;i<7;i++){
+    var v=heatVals[i];
+    var bg=v===null?'#f7f7fb':v>=85?'#00b894':v>=75?'#e8faf6':v>=60?'#fef9ec':'#fdf0ec';
+    var txt=v===null?'—':v+'%';
+    var tc2=v===null?'#ccc':v>=85?'white':v>=75?'var(--green)':v>=60?'#c69a00':'var(--red)';
+    hm.innerHTML+='<div class="heatmap-cell" style="background:'+bg+';color:'+tc2+';" title="OEE: '+txt+'">'+txt+'</div>';
+  }
+
+  // Costi
+  var costiBase=1120000;
+  var costiVoci=[{label:'Manodopera',pct:38,icon:'👷',col:'var(--accent)'},{label:'Energia',pct:22,icon:'⚡',col:'var(--amber)'},{label:'Mat. ausiliari',pct:18,icon:'📦',col:'var(--blue)'},{label:'Manutenzione',pct:22,icon:'🔧',col:'var(--orange)'}];
+  document.getElementById('costi-grid').innerHTML=costiVoci.map(function(c){
+    var val=Math.round(costiBase*c.pct/100);
+    return '<div style="padding:16px;background:var(--bg);border-radius:10px;border:1px solid var(--border);"><div style="font-size:20px;margin-bottom:6px;">'+c.icon+'</div><div style="font-size:11px;color:var(--ink-muted);font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">'+c.label+'</div><div style="font-size:20px;font-weight:700;color:'+c.col+';">€'+(val/1000).toFixed(0)+'K</div><div style="font-size:11px;color:var(--ink-muted);margin-top:2px;">'+c.pct+'% del totale</div><div class="progress-track"><div class="progress-fill" style="width:'+(c.pct*2)+'%;background:'+c.col+';"></div></div></div>';
+  }).join('');
+  document.getElementById('badge-ci').textContent='€'+(costiBase/1000).toFixed(0)+'K totale';
+}
+
+function setPeriod(p,btn){
+  curPeriod=p;
+  document.querySelectorAll('.period-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  render();
+}
+
+function setLinea(v){ curLinea=v; render(); }
+
+var now=new Date();
+document.getElementById('last-update').textContent=now.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+render();
+</script>
+</body>
+</html>

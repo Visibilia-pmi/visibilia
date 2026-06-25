@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Direzione Aziendale — Visibilia</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#1a1a2e;--ink-soft:#4a4a6a;--ink-muted:#8888aa;
+  --bg:#f7f7fb;--surface:#fff;--border:#e8e8f0;
+  --green:#00b894;--green-bg:#e8faf6;
+  --red:#e17055;--red-bg:#fdf0ec;
+  --amber:#fdcb6e;--amber-bg:#fef9ec;
+  --blue:#0984e3;--blue-bg:#e8f4fd;
+  --accent:#6c63ff;--accent-bg:#f0effe;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;padding-top:52px;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* NAV */
+.v-nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(8,8,8,.97);backdrop-filter:blur(12px);height:52px;display:flex;align-items:center;padding:0 16px;gap:6px;border-bottom:1px solid rgba(255,255,255,.07);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.v-brand{display:flex;align-items:center;gap:8px;margin-right:10px;flex-shrink:0;text-decoration:none;}
+.v-brand-name{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:white;letter-spacing:.06em;}
+.v-sep{width:1px;height:20px;background:rgba(255,255,255,.1);margin:0 4px;flex-shrink:0;}
+.v-btn{padding:5px 13px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;font-size:12px;font-family:'Inter',sans-serif;color:rgba(255,255,255,.5);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;text-decoration:none;display:inline-flex;align-items:center;}
+.v-btn:hover{color:white;border-color:rgba(255,255,255,.3);}
+.v-btn.active{background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.25);}
+
+/* HEADER */
+.header{background:var(--ink);color:white;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;border-bottom:1px solid rgba(255,255,255,.05);}
+.header-brand{display:flex;align-items:center;gap:12px;}
+.header-logo{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;}
+.header-title{font-size:13px;font-weight:500;color:rgba(255,255,255,.9);}
+.header-title span{color:rgba(255,255,255,.45);font-weight:300;margin-left:6px;}
+.live-badge{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);font-weight:500;}
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+
+.main{max-width:1280px;margin:0 auto;padding:28px 32px 48px;}
+.page-title{font-family:'DM Serif Display',serif;font-size:28px;color:var(--ink);line-height:1.2;margin-bottom:4px;}
+.page-subtitle{font-size:13px;color:var(--ink-muted);}
+.demo-banner{background:var(--accent-bg);border:1px solid #d4d0ff;border-radius:8px;padding:10px 16px;margin-bottom:24px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--accent);}
+.demo-banner strong{font-weight:600;}
+
+/* CONTROLS */
+.controls-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+.controls-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.ctrl-label{font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em;margin-right:4px;}
+.period-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;transition:all .15s;}
+.period-btn.active{background:var(--ink);color:white;border-color:var(--ink);}
+.scenario-select{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;outline:none;}
+.edit-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--accent);background:var(--accent-bg);font-size:12px;font-family:'Inter',sans-serif;color:var(--accent);cursor:pointer;font-weight:500;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 20px 16px;position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s;animation:fadeIn .3s ease;}
+.kpi-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);transform:translateY(-1px);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi-card.green::before{background:var(--green);}
+.kpi-card.red::before{background:var(--red);}
+.kpi-card.blue::before{background:var(--blue);}
+.kpi-card.accent::before{background:var(--accent);}
+.kpi-label{font-size:11px;font-weight:500;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.kpi-value{font-size:30px;font-weight:600;color:var(--ink);line-height:1;margin-bottom:8px;letter-spacing:-.02em;}
+.kpi-value sup{font-size:14px;font-weight:400;color:var(--ink-soft);vertical-align:super;}
+.kpi-delta{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:500;padding:2px 7px;border-radius:10px;}
+.kpi-delta.up{color:var(--green);background:var(--green-bg);}
+.kpi-delta.down{color:var(--red);background:var(--red-bg);}
+.kpi-compare{font-size:11px;color:var(--ink-muted);margin-top:4px;}
+
+/* LAYOUT */
+.grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:box-shadow .2s;animation:fadeIn .3s ease;}
+.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
+.card-title{font-size:13px;font-weight:600;color:var(--ink);}
+.card-sub{font-size:11px;color:var(--ink-muted);margin-top:2px;}
+.card-badge{font-size:11px;padding:3px 9px;border-radius:10px;font-weight:500;white-space:nowrap;}
+.card-badge.green{background:var(--green-bg);color:var(--green);}
+.card-badge.red{background:var(--red-bg);color:var(--red);}
+.card-badge.amber{background:var(--amber-bg);color:#c69a00;}
+.card-badge.blue{background:var(--blue-bg);color:var(--blue);}
+
+.bar-chart{display:flex;flex-direction:column;gap:10px;}
+.bar-row{display:flex;align-items:center;gap:10px;}
+.bar-month{font-size:11px;color:var(--ink-muted);width:28px;flex-shrink:0;}
+.bar-track{flex:1;height:20px;background:#f0f0f8;border-radius:4px;position:relative;overflow:hidden;}
+.bar-val{font-size:11px;font-weight:500;width:48px;text-align:right;flex-shrink:0;}
+
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);padding:0 0 10px;text-align:left;border-bottom:1px solid var(--border);}
+.data-table th:not(:first-child){text-align:right;}
+.data-table td{padding:10px 0;border-bottom:1px solid var(--bg);font-size:12px;color:var(--ink);}
+.data-table td:not(:first-child){text-align:right;}
+.data-table tr:last-child td{border-bottom:none;}
+.client-name{font-weight:500;}
+.client-sector{font-size:11px;color:var(--ink-muted);}
+.progress-track{height:5px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:4px;}
+.progress-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .6s ease;}
+
+.alerts{display:flex;flex-direction:column;gap:8px;}
+.alert-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;font-size:12px;}
+.alert-item.warn{background:var(--amber-bg);}
+.alert-item.danger{background:var(--red-bg);}
+.alert-item.ok{background:var(--green-bg);}
+.alert-item.info{background:var(--blue-bg);}
+.alert-text{color:var(--ink-soft);line-height:1.4;}
+.alert-text strong{color:var(--ink);font-weight:600;}
+
+.donut-wrap{display:flex;align-items:center;gap:20px;}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:8px;}
+.legend-row{display:flex;align-items:center;gap:8px;}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.legend-name{font-size:12px;color:var(--ink-soft);flex:1;}
+.legend-pct{font-size:12px;font-weight:600;color:var(--ink);}
+
+.gauge-row{display:flex;gap:16px;}
+.gauge-item{flex:1;text-align:center;}
+.gauge-label{font-size:11px;color:var(--ink-muted);margin-bottom:8px;}
+.gauge-circle{width:64px;height:64px;margin:0 auto 6px;position:relative;}
+.gauge-circle svg{transform:rotate(-90deg);}
+.gauge-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--ink);}
+
+.sparkline{display:flex;align-items:flex-end;gap:3px;height:36px;}
+.spark-bar{flex:1;border-radius:2px 2px 0 0;background:var(--accent-bg);}
+.spark-bar.highlight{background:var(--accent);}
+
+.dash-footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.footer-brand{font-size:12px;color:var(--ink-muted);}
+.footer-brand strong{color:var(--accent);font-weight:600;}
+
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .grid-2-1,.grid-3,.grid-2{grid-template-columns:1fr;}
+  .main{padding:20px 16px 40px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="v-nav">
+  <a class="v-brand" href="index.html">
+    <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+      <rect width="64" height="64" rx="15" fill="#0f2912"/>
+      <path d="M5 32 C12 18, 52 18, 59 32 C52 46, 12 46, 5 32Z" stroke="#4caf6a" stroke-width="2.5" fill="none" opacity=".5"/>
+      <circle cx="32" cy="32" r="10" stroke="#4caf6a" stroke-width="2" fill="none" opacity=".3"/>
+      <circle cx="32" cy="32" r="4.5" fill="#f5d060"/>
+      <circle cx="29" cy="29" r="1.5" fill="white" opacity=".5"/>
+    </svg>
+    <span class="v-brand-name">VISIBILIA</span>
+  </a>
+  <div class="v-sep"></div>
+  <a class="v-btn active" href="dashboard-pmi.html">📈 Direzione</a>
+  <a class="v-btn" href="dashboard-produzione.html">🏭 Produzione</a>
+  <a class="v-btn" href="dashboard-horeca.html">🍽 HORECA</a>
+  <a class="v-btn" href="dashboard-commerciale.html">💼 Commerciale</a>
+  <a class="v-btn" href="index.html">🏠 Home</a>
+</nav>
+
+<main class="main">
+  <div class="demo-banner">🔒 <span><strong>Demo interattiva</strong> — Dati simulati. Cambia periodo e scenario per esplorare.</span></div>
+  <div style="margin-bottom:24px;">
+    <h1 class="page-title">Panoramica Aziendale</h1>
+    <p class="page-subtitle">Rossi &amp; Figli S.r.l. — Produzione alimentare, Catania</p>
+  </div>
+
+  <div class="controls-bar">
+    <div class="controls-left">
+      <span class="ctrl-label">Periodo:</span>
+      <button class="period-btn" onclick="setPeriod('Q1',this)">Q1</button>
+      <button class="period-btn" onclick="setPeriod('Q2',this)">Q2</button>
+      <button class="period-btn active" onclick="setPeriod('YTD',this)">YTD 2025</button>
+      <button class="period-btn" onclick="setPeriod('12M',this)">12 mesi</button>
+      <span class="ctrl-label" style="margin-left:16px;">Scenario:</span>
+      <select class="scenario-select" onchange="setScenario(this.value)">
+        <option value="base">Base (attuale)</option>
+        <option value="optimistic">Ottimistico +15%</option>
+        <option value="pessimistic">Pessimistico -10%</option>
+      </select>
+    </div>
+    <button class="edit-btn" id="edit-btn" onclick="toggleEdit()">✏️ Modifica KPI</button>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card green"><div class="kpi-label">Fatturato</div><div class="kpi-value" id="kv-fat">2,84<sup>M€</sup></div><span class="kpi-delta up" id="kd-fat">↑ +12,3%</span><div class="kpi-compare">vs stesso periodo 2024</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">Margine Lordo</div><div class="kpi-value" id="kv-mar">38,2<sup>%</sup></div><span class="kpi-delta up" id="kd-mar">↑ +1,8 pp</span><div class="kpi-compare">obiettivo: 36%</div></div>
+    <div class="kpi-card red"><div class="kpi-label">Costi Operativi</div><div class="kpi-value" id="kv-cos">1,12<sup>M€</sup></div><span class="kpi-delta down" id="kd-cos">↑ +8,1%</span><div class="kpi-compare">budget: 1,05M€</div></div>
+    <div class="kpi-card accent"><div class="kpi-label">EBITDA</div><div class="kpi-value" id="kv-ebi">19,4<sup>%</sup></div><span class="kpi-delta up" id="kd-ebi">↑ +2,1 pp</span><div class="kpi-compare">obiettivo: 18%</div></div>
+  </div>
+
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Fatturato mensile</div><div class="card-sub">Realizzato vs obiettivo</div></div><span class="card-badge green" id="badge-fat">+12,3% YTD</span></div>
+      <div class="bar-chart" id="rev-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Alert KPI</div><div class="card-sub">Situazioni da monitorare</div></div></div>
+      <div class="alerts" id="alerts-box"></div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Struttura Costi</div><div class="card-sub">Ripartizione YTD</div></div></div>
+      <div class="donut-wrap">
+        <svg width="80" height="80" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="30" fill="none" stroke="#e8e8f0" stroke-width="12"/>
+          <circle cx="40" cy="40" r="30" fill="none" stroke="#6c63ff" stroke-width="12" stroke-dasharray="75.4 113.1"/>
+          <circle cx="40" cy="40" r="30" fill="none" stroke="#0984e3" stroke-width="12" stroke-dasharray="37.7 150.8" stroke-dashoffset="-75.4"/>
+          <circle cx="40" cy="40" r="30" fill="none" stroke="#00b894" stroke-width="12" stroke-dasharray="22.6 165.9" stroke-dashoffset="-113.1"/>
+          <circle cx="40" cy="40" r="30" fill="none" stroke="#fdcb6e" stroke-width="12" stroke-dasharray="52.8 135.7" stroke-dashoffset="-135.7"/>
+        </svg>
+        <div class="donut-legend">
+          <div class="legend-row"><div class="legend-dot" style="background:#6c63ff"></div><span class="legend-name">Personale</span><span class="legend-pct">40%</span></div>
+          <div class="legend-row"><div class="legend-dot" style="background:#0984e3"></div><span class="legend-name">Mat. prime</span><span class="legend-pct">20%</span></div>
+          <div class="legend-row"><div class="legend-dot" style="background:#00b894"></div><span class="legend-name">Energia</span><span class="legend-pct">12%</span></div>
+          <div class="legend-row"><div class="legend-dot" style="background:#fdcb6e"></div><span class="legend-name">Logistica</span><span class="legend-pct">18%</span></div>
+          <div class="legend-row"><div class="legend-dot" style="background:#e8e8f0"></div><span class="legend-name">Altro</span><span class="legend-pct">10%</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Top Clienti</div><div class="card-sub">Per fatturato YTD</div></div><span class="card-badge green">5 attivi</span></div>
+      <table class="data-table"><thead><tr><th>Cliente</th><th>€</th><th>%</th></tr></thead><tbody id="clienti-tbody"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Prodotti per Margine</div><div class="card-sub">Contributo al margine lordo</div></div></div>
+      <div class="bar-chart" id="product-chart"></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Indicatori Strategici</div><div class="card-sub">Stato attuale vs obiettivo</div></div></div>
+      <div class="gauge-row">
+        <div class="gauge-item"><div class="gauge-label">Liquidità</div><div class="gauge-circle"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="none" stroke="#e8e8f0" stroke-width="8"/><circle cx="32" cy="32" r="24" fill="none" stroke="#00b894" stroke-width="8" stroke-dasharray="120.1 30.9" stroke-linecap="round"/></svg><div class="gauge-num">80%</div></div></div>
+        <div class="gauge-item"><div class="gauge-label">Incasso</div><div class="gauge-circle"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="none" stroke="#e8e8f0" stroke-width="8"/><circle cx="32" cy="32" r="24" fill="none" stroke="#6c63ff" stroke-width="8" stroke-dasharray="94.2 56.5" stroke-linecap="round"/></svg><div class="gauge-num">63%</div></div></div>
+        <div class="gauge-item"><div class="gauge-label">Obiettivo</div><div class="gauge-circle"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="none" stroke="#e8e8f0" stroke-width="8"/><circle id="g-obj-arc" cx="32" cy="32" r="24" fill="none" stroke="#0984e3" stroke-width="8" stroke-dasharray="113.1 37.7" stroke-linecap="round"/></svg><div class="gauge-num" id="g-obj-num">75%</div></div></div>
+        <div class="gauge-item"><div class="gauge-label">Soddisf.</div><div class="gauge-circle"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="none" stroke="#e8e8f0" stroke-width="8"/><circle cx="32" cy="32" r="24" fill="none" stroke="#fdcb6e" stroke-width="8" stroke-dasharray="131.9 19.1" stroke-linecap="round"/></svg><div class="gauge-num">88%</div></div></div>
+      </div>
+      <div style="margin-top:20px;">
+        <div style="font-size:11px;color:var(--ink-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Trend Margine Netto — 6 mesi</div>
+        <div class="sparkline" id="sparkline"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px;" id="spark-labels"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Previsione Fine Anno</div><div class="card-sub">Proiezione su trend YTD</div></div><span class="card-badge green" id="badge-prev">In linea</span></div>
+      <div style="display:flex;flex-direction:column;gap:14px;" id="prev-box"></div>
+    </div>
+  </div>
+
+  <!-- CASH FLOW + CREDITI -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Cash Flow</div><div class="card-sub">Liquidità e previsione 30 giorni</div></div><span class="card-badge amber">Attenzione</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;" id="cf-grid"></div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="font-size:11px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.06em;">Trend cassa — 6 mesi</div>
+        <div style="display:flex;align-items:flex-end;gap:4px;height:40px;" id="cf-spark"></div>
+        <div style="display:flex;justify-content:space-between;" id="cf-labels"></div>
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--amber-bg);border-radius:8px;" id="cf-alert"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Crediti e Insoluti</div><div class="card-sub">Scaduto per cliente</div></div><span class="card-badge red">€ 48.200 scaduti</span></div>
+      <table class="data-table" style="margin-bottom:14px;"><thead><tr><th>Cliente</th><th>Importo</th><th>Giorni</th><th>Stato</th></tr></thead>
+      <tbody>
+        <tr><td><div class="client-name">GDO Sicilia</div></td><td>€ 12.400</td><td style="color:var(--amber);font-weight:600;">22 gg</td><td><span style="background:var(--amber-bg);color:#c69a00;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500;">In scadenza</span></td></tr>
+        <tr><td><div class="client-name">Horeca Palermo</div></td><td>€ 18.700</td><td style="color:var(--red);font-weight:600;">67 gg</td><td><span style="background:var(--red-bg);color:var(--red);font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500;">Scaduto</span></td></tr>
+        <tr><td><div class="client-name">Distribuzione Sud</div></td><td>€ 29.500</td><td style="color:var(--red);font-weight:600;">94 gg</td><td><span style="background:var(--red-bg);color:var(--red);font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500;">Critico</span></td></tr>
+        <tr><td><div class="client-name">Export Nord Italia</div></td><td>€ 8.100</td><td style="color:var(--green);font-weight:600;">8 gg</td><td><span style="background:var(--green-bg);color:var(--green);font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500;">Regolare</span></td></tr>
+      </tbody></table>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+        <div style="text-align:center;padding:10px 6px;background:var(--green-bg);border-radius:8px;"><div style="font-size:16px;font-weight:600;color:var(--green);">€ 8.100</div><div style="font-size:10px;color:var(--ink-muted);margin-top:2px;">Entro 30gg</div></div>
+        <div style="text-align:center;padding:10px 6px;background:var(--amber-bg);border-radius:8px;"><div style="font-size:16px;font-weight:600;color:#c69a00;">€ 31.100</div><div style="font-size:10px;color:var(--ink-muted);margin-top:2px;">30–60 gg</div></div>
+        <div style="text-align:center;padding:10px 6px;background:var(--red-bg);border-radius:8px;"><div style="font-size:16px;font-weight:600;color:var(--red);">€ 29.500</div><div style="font-size:10px;color:var(--ink-muted);margin-top:2px;">Oltre 60gg</div></div>
+      </div>
+      <div style="padding:10px 12px;background:var(--red-bg);border-radius:8px;border-left:3px solid var(--red);font-size:12px;color:var(--ink-soft);line-height:1.4;">🔴 <strong style="color:var(--ink)">Distribuzione Sud</strong> non paga da 94 giorni. Totale a rischio: <strong style="color:var(--red);">€ 29.500</strong>. Azione legale consigliata.</div>
+    </div>
+  </div>
+
+  <div class="dash-footer">
+    <div class="footer-brand">Powered by <strong>Visibilia</strong></div>
+    <div style="font-size:11px;color:var(--ink-muted);font-style:italic;">visibilia.dashboardpmi@outlook.it</div>
+  </div>
+</main>
+
+<script>
+var DATA = {
+  YTD:{ fat:2.84, mar:38.2, cos:1.12, ebi:19.4, dFat:'↑ +12,3%', dMar:'↑ +1,8 pp', dCos:'↑ +8,1%', dEbi:'↑ +2,1 pp', months:['Gen','Feb','Mar','Apr','Mag','Giu'], actual:[420,390,510,480,520,520], target:[430,430,470,470,470,470], spark:[14.2,15.8,16.1,17.4,18.9,19.4], cash:[210,235,258,241,214,183], obj:75, pFat:5.1, pEbi:19.8, pCos:2.18 },
+  Q1: { fat:1.22, mar:36.8, cos:0.48, ebi:17.2, dFat:'↑ +8,4%', dMar:'↑ +0,9 pp', dCos:'↑ +5,2%', dEbi:'↑ +1,1 pp', months:['Gen','Feb','Mar'], actual:[420,390,410], target:[430,430,430], spark:[14.2,15.8,16.1,null,null,null], cash:[210,235,258,null,null,null], obj:40, pFat:4.8, pEbi:18.2, pCos:2.0 },
+  Q2: { fat:1.52, mar:39.4, cos:0.61, ebi:21.1, dFat:'↑ +15,6%', dMar:'↑ +2,6 pp', dCos:'↑ +10,8%', dEbi:'↑ +3,0 pp', months:['Apr','Mag','Giu'], actual:[480,520,520], target:[470,470,470], spark:[null,null,null,17.4,18.9,19.4], cash:[null,null,null,241,214,183], obj:55, pFat:5.3, pEbi:20.4, pCos:2.25 },
+  '12M':{ fat:4.91, mar:37.6, cos:2.04, ebi:18.8, dFat:'↑ +9,2%', dMar:'↑ +1,2 pp', dCos:'↑ +6,8%', dEbi:'↑ +1,5 pp', months:['Lug','Ago','Set','Ott','Nov','Dic','Gen','Feb','Mar','Apr','Mag','Giu'], actual:[380,310,430,460,490,510,420,390,510,480,520,520], target:[400,350,420,450,480,500,430,430,470,470,470,470], spark:[12.1,11.8,13.4,14.8,15.2,15.9,14.2,15.8,16.1,17.4,18.9,19.4], cash:[190,160,195,210,228,245,210,235,258,241,214,183], obj:98, pFat:4.91, pEbi:18.8, pCos:2.04 }
+};
+var SCENARIOS = { base:{mult:1.0,label:'Base'}, optimistic:{mult:1.15,label:'Ottimistico'}, pessimistic:{mult:0.90,label:'Pessimistico'} };
+var curPeriod = 'YTD', curScenario = 'base';
+
+function fmt(n){ return n>=1000?(n/1000).toFixed(2).replace('.',',')+'':(n+''); }
+
+function render(){
+  var d = DATA[curPeriod], s = SCENARIOS[curScenario];
+  var fat = (d.fat*s.mult).toFixed(2).replace('.',',');
+  var mar = (d.mar*(s.mult>1?1.02:s.mult<1?0.98:1)).toFixed(1).replace('.',',');
+  var cos = (d.cos*s.mult).toFixed(2).replace('.',',');
+  var ebi = (d.ebi*(s.mult>1?1.03:s.mult<1?0.97:1)).toFixed(1).replace('.',',');
+
+  document.getElementById('kv-fat').innerHTML = fat+'<sup>M€</sup>';
+  document.getElementById('kv-mar').innerHTML = mar+'<sup>%</sup>';
+  document.getElementById('kv-cos').innerHTML = cos+'<sup>M€</sup>';
+  document.getElementById('kv-ebi').innerHTML = ebi+'<sup>%</sup>';
+  document.getElementById('kd-fat').textContent = d.dFat;
+  document.getElementById('kd-mar').textContent = d.dMar;
+  document.getElementById('kd-cos').textContent = d.dCos;
+  document.getElementById('kd-ebi').textContent = d.dEbi;
+
+  // Revenue chart
+  var maxV = Math.max.apply(null, d.actual.concat(d.target));
+  var rc = document.getElementById('rev-chart');
+  rc.innerHTML = '';
+  d.months.forEach(function(m,i){
+    var ap=(d.actual[i]/maxV*100).toFixed(1), tp=(d.target[i]/maxV*100).toFixed(1), ok=d.actual[i]>=d.target[i];
+    rc.innerHTML += '<div class="bar-row"><span class="bar-month">'+m+'</span><div class="bar-track"><div style="position:absolute;top:6px;left:0;height:8px;width:'+tp+'%;background:#e0e0ee;border-radius:4px;"></div><div style="position:absolute;top:6px;left:0;height:8px;width:'+ap+'%;background:'+(ok?'#6c63ff':'#e17055')+';border-radius:4px;transition:width .6s;"></div></div><span class="bar-val" style="color:'+(ok?'var(--accent)':'var(--red)')+';">'+d.actual[i]+'K</span></div>';
+  });
+
+  // Alerts
+  var overBudget = parseFloat(cos)>1.05;
+  document.getElementById('alerts-box').innerHTML =
+    '<div class="alert-item '+(overBudget?'danger':'ok')+'"><span>'+(overBudget?'⚠️':'✅')+'</span><div class="alert-text"><strong>Costi operativi</strong> '+(overBudget?'superiori al budget del 6,7%.':'in linea con il budget.')+'</div></div>'+
+    '<div class="alert-item warn"><span>📦</span><div class="alert-text"><strong>Scorte materie prime</strong> al 18% sotto soglia minima.</div></div>'+
+    '<div class="alert-item ok"><span>✅</span><div class="alert-text"><strong>Margine lordo</strong> supera obiettivo di 2,2 punti.</div></div>'+
+    '<div class="alert-item warn"><span>👥</span><div class="alert-text"><strong>Cliente Distribuzione Sud</strong> non ha rinnovato l\'ordine trimestrale.</div></div>';
+
+  // Sparkline
+  var sv = d.spark.filter(function(v){return v!==null;});
+  var sm = Math.max.apply(null,sv);
+  var sp = document.getElementById('sparkline');
+  sp.innerHTML = '';
+  var slabels = [], smLabels = d.months.slice(-6);
+  d.spark.forEach(function(v,i){
+    if(v===null) return;
+    var h=(v/sm*100).toFixed(0);
+    var isLast = (i===d.spark.length-1)||(d.spark[i+1]===null);
+    sp.innerHTML += '<div class="spark-bar'+(isLast?' highlight':'')+'" style="height:'+h+'%" title="'+v+'%"></div>';
+    slabels.push(smLabels[slabels.length]||'');
+  });
+  document.getElementById('spark-labels').innerHTML = slabels.map(function(l){return '<span style="font-size:10px;color:var(--ink-muted);">'+l+'</span>';}).join('');
+
+  // Gauge obiettivo
+  var perc = d.obj/100, circ = 2*Math.PI*24;
+  document.getElementById('g-obj-arc').setAttribute('stroke-dasharray',(circ*perc).toFixed(1)+' '+(circ*(1-perc)).toFixed(1));
+  document.getElementById('g-obj-num').textContent = d.obj+'%';
+
+  // Previsione
+  var pf=(d.pFat*s.mult).toFixed(1), pe=(d.pEbi*(s.mult>1?1.03:s.mult<1?0.97:1)).toFixed(1), pc=(d.pCos*s.mult).toFixed(2);
+  var cosOk=parseFloat(pc)<=2.1;
+  document.getElementById('prev-box').innerHTML =
+    '<div><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:12px;color:var(--ink-soft);">Fatturato previsto</span><span style="font-size:13px;font-weight:600;color:var(--ink);">'+pf+'M€</span></div><div class="progress-track" style="height:8px;"><div style="height:8px;width:'+(Math.min(parseFloat(pf)/5*100,100))+'%;background:var(--accent);border-radius:4px;"></div></div><div style="display:flex;justify-content:space-between;margin-top:3px;"><span style="font-size:10px;color:var(--ink-muted);">Realizzato: '+fat+'M€</span><span style="font-size:10px;color:var(--ink-muted);">Obiettivo: 5,0M€ '+(parseFloat(pf)>=5?'✓':'⚠️')+'</span></div></div>'+
+    '<div><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:12px;color:var(--ink-soft);">EBITDA previsto</span><span style="font-size:13px;font-weight:600;color:var(--ink);">'+pe+'%</span></div><div class="progress-track" style="height:8px;"><div style="height:8px;width:'+(Math.min(parseFloat(pe)/25*100,100))+'%;background:var(--green);border-radius:4px;"></div></div></div>'+
+    '<div><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:12px;color:var(--ink-soft);">Costi operativi</span><span style="font-size:13px;font-weight:600;color:'+(cosOk?'var(--ink)':'var(--red)')+';">'+pc+'M€</span></div><div class="progress-track" style="height:8px;"><div style="height:8px;width:'+(Math.min(parseFloat(pc)/2.1*100,100))+'%;background:'+(cosOk?'var(--accent)':'var(--red)')+';border-radius:4px;"></div></div></div>'+
+    '<div style="padding:12px;background:var(--accent-bg);border-radius:8px;"><div style="font-size:11px;font-weight:600;color:var(--accent);margin-bottom:4px;">💡 Insight automatico</div><div style="font-size:12px;color:var(--ink-soft);line-height:1.5;">Scenario <strong style="color:var(--ink)">'+s.label+'</strong>: fatturato previsto '+pf+'M€. EBITDA al '+pe+'% — '+(parseFloat(pe)>=18?'in linea con obiettivo':'sotto target')+'.</div></div>';
+
+  // Clienti
+  var clients = [{n:'GDO Sicilia',s:'Grande distribuzione',v:'680K',p:100},{n:'Horeca Palermo',s:'Ristorazione',v:'412K',p:60},{n:'Export Nord Italia',s:'Grossista',v:'298K',p:45},{n:'Supermercati Est',s:'Retail',v:'220K',p:32},{n:'Altri (18)',s:'Vari',v:'1,23M',p:100}];
+  document.getElementById('clienti-tbody').innerHTML = clients.map(function(c){return '<tr><td><div class="client-name">'+c.n+'</div><div class="client-sector">'+c.s+'</div></td><td>'+c.v+'</td><td><div style="font-size:11px;">'+Math.round(c.p*0.24)+'%</div><div class="progress-track"><div class="progress-fill" style="width:'+Math.min(c.p,100)+'%"></div></div></td></tr>';}).join('');
+
+  // Products
+  var prods=['Linea Bio','Premium','Base','Export','Private L.'], margins=[52,44,31,38,28].map(function(v){return Math.round(v*(s.mult>1?1.02:s.mult<1?0.98:1));});
+  var pc2=document.getElementById('product-chart'); pc2.innerHTML='';
+  prods.forEach(function(p,i){
+    var col=margins[i]>=40?'#00b894':margins[i]>=35?'#6c63ff':'#e17055';
+    pc2.innerHTML+='<div class="bar-row"><span class="bar-month" style="width:60px;font-size:11px;color:var(--ink-soft);">'+p+'</span><div class="bar-track"><div style="position:absolute;top:6px;left:0;height:8px;width:'+(margins[i]*1.9)+'%;background:'+col+';border-radius:4px;transition:width .6s;"></div></div><span class="bar-val">'+margins[i]+'%</span></div>';
+  });
+
+  // Cash flow
+  var cashVals = d.cash.filter(function(v){return v!==null;});
+  var saldo = cashVals[cashVals.length-1];
+  var cashMax = Math.max.apply(null,cashVals);
+  document.getElementById('cf-grid').innerHTML =
+    '<div style="background:var(--green-bg);border-radius:8px;padding:12px;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);font-weight:600;margin-bottom:4px;">Saldo Banca</div><div style="font-size:20px;font-weight:600;color:var(--green);">€ '+saldo.toLocaleString('it-IT')+'</div></div>'+
+    '<div style="background:var(--accent-bg);border-radius:8px;padding:12px;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);font-weight:600;margin-bottom:4px;">Cash Runway</div><div style="font-size:20px;font-weight:600;color:var(--accent);">'+(saldo/45).toFixed(1)+' mesi</div></div>'+
+    '<div style="background:var(--blue-bg);border-radius:8px;padding:12px;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);font-weight:600;margin-bottom:4px;">Entrate 30gg</div><div style="font-size:20px;font-weight:600;color:var(--blue);">€ '+(97000).toLocaleString('it-IT')+'</div></div>'+
+    '<div style="background:var(--red-bg);border-radius:8px;padding:12px;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);font-weight:600;margin-bottom:4px;">Uscite 30gg</div><div style="font-size:20px;font-weight:600;color:var(--red);">€ '+(124000).toLocaleString('it-IT')+'</div></div>';
+
+  var cfSp=document.getElementById('cf-spark'), cfLb=document.getElementById('cf-labels');
+  cfSp.innerHTML=''; cfLb.innerHTML='';
+  cashVals.forEach(function(v,i){
+    var h=(v/cashMax*100).toFixed(0), isLast=i===cashVals.length-1;
+    cfSp.innerHTML+='<div style="flex:1;height:'+h+'%;background:'+(isLast?'var(--blue)':'rgba(9,132,227,.35)')+';border-radius:3px 3px 0 0;" title="€'+v+'K"></div>';
+    cfLb.innerHTML+='<span style="font-size:10px;color:var(--ink-muted);">'+(d.months[i]||'')+'</span>';
+  });
+  document.getElementById('cf-alert').innerHTML = '<div style="font-size:12px;color:var(--ink-soft);line-height:1.4;">'+(saldo<160000?'⚠️ <strong style="color:var(--ink)">Attenzione:</strong> liquidità in calo. Verificare incassi in scadenza.':'✅ <strong style="color:var(--ink)">Liquidità stabile.</strong> Nessuna criticità prevista nei prossimi 30 giorni.')+'</div>';
+}
+
+function setPeriod(p, btn) {
+  curPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  render();
+}
+
+function setScenario(v){ curScenario=v; render(); }
+
+var editMode=false;
+function toggleEdit(){
+  editMode=!editMode;
+  var btn=document.getElementById('edit-btn');
+  btn.textContent=editMode?'✅ Salva':'✏️ Modifica KPI';
+}
+
+render();
+</script>
+</body>
+</html>

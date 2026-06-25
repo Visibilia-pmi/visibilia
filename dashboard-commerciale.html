@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commerciale & Vendite — Visibilia</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#0d1f0f;--ink-2:#2d4a30;--ink-3:#6a8a6d;
+  --bg:#f4f7f4;--surface:#fff;--border:#dce8dd;
+  --forest:#1a3d1f;--green:#2d7a3a;--green-bg:#eaf5ec;
+  --gold:#b8860b;--gold-bg:#fdf8e8;--gold-lt:#f5d060;
+  --red:#c0392b;--red-bg:#fdf0ee;
+  --blue:#1a4a7a;--blue-bg:#eaf0f8;
+  --warm:#f9f5ee;
+}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;padding-top:52px;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.v-nav{position:fixed;top:0;left:0;right:0;z-index:9999;background:rgba(8,8,8,.97);backdrop-filter:blur(12px);height:52px;display:flex;align-items:center;padding:0 16px;gap:6px;border-bottom:1px solid rgba(255,255,255,.07);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.v-brand{display:flex;align-items:center;gap:8px;margin-right:10px;flex-shrink:0;text-decoration:none;}
+.v-brand-name{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:white;letter-spacing:.06em;}
+.v-sep{width:1px;height:20px;background:rgba(255,255,255,.1);margin:0 4px;flex-shrink:0;}
+.v-btn{padding:5px 13px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;font-size:12px;font-family:'Inter',sans-serif;color:rgba(255,255,255,.5);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;text-decoration:none;display:inline-flex;align-items:center;}
+.v-btn:hover{color:white;border-color:rgba(255,255,255,.3);}
+.v-btn.active{background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.25);}
+
+.main{max-width:1320px;margin:0 auto;padding:28px 32px 56px;}
+.demo-banner{background:var(--gold-bg);border:1px solid rgba(184,134,11,.25);border-radius:10px;padding:10px 16px;margin-bottom:24px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gold);}
+.page-title{font-family:'Libre Baskerville',serif;font-size:30px;font-weight:700;color:var(--ink);line-height:1.1;}
+.page-title em{font-style:italic;color:var(--green);}
+
+.controls-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+.controls-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.ctrl-label{font-size:11px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em;margin-right:2px;}
+.period-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-family:'Space Grotesk',sans-serif;color:var(--ink-2);cursor:pointer;transition:all .15s;}
+.period-btn.active{background:var(--forest);color:white;border-color:var(--forest);}
+.agente-select{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--bg);font-size:12px;font-family:'Space Grotesk',sans-serif;color:var(--ink-2);cursor:pointer;outline:none;}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 16px 14px;position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s;animation:fadeIn .3s ease;}
+.kpi-card:hover{box-shadow:0 4px 20px rgba(13,31,15,.08);transform:translateY(-1px);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi-card.forest::before{background:var(--forest);}
+.kpi-card.green::before{background:var(--green);}
+.kpi-card.gold::before{background:var(--gold);}
+.kpi-card.red::before{background:var(--red);}
+.kpi-card.blue::before{background:var(--blue);}
+.kpi-label{font-size:10px;font-weight:600;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;}
+.kpi-value{font-size:26px;font-weight:700;color:var(--ink);line-height:1;margin-bottom:6px;letter-spacing:-.02em;}
+.kpi-value sup{font-size:13px;font-weight:400;color:var(--ink-3);vertical-align:super;}
+.kpi-delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;padding:2px 7px;border-radius:8px;}
+.kpi-delta.up{color:var(--green);background:var(--green-bg);}
+.kpi-delta.down{color:var(--red);background:var(--red-bg);}
+.kpi-delta.warn{color:var(--gold);background:var(--gold-bg);}
+
+.grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:box-shadow .2s;animation:fadeIn .3s ease;}
+.card:hover{box-shadow:0 4px 16px rgba(13,31,15,.06);}
+.card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
+.card-title{font-family:'Libre Baskerville',serif;font-size:14px;font-weight:700;color:var(--ink);}
+.card-sub{font-size:11px;color:var(--ink-3);margin-top:2px;}
+.card-badge{font-size:11px;padding:3px 9px;border-radius:8px;font-weight:500;white-space:nowrap;}
+.card-badge.green{background:var(--green-bg);color:var(--green);}
+.card-badge.red{background:var(--red-bg);color:var(--red);}
+.card-badge.gold{background:var(--gold-bg);color:var(--gold);}
+.card-badge.blue{background:var(--blue-bg);color:var(--blue);}
+.card-badge.forest{background:var(--forest);color:rgba(255,255,255,.85);}
+
+.pipeline{display:flex;gap:0;margin-bottom:4px;border-radius:8px;overflow:hidden;height:32px;}
+.pipe-stage{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;transition:flex .6s ease;cursor:default;position:relative;}
+
+.bar-chart{display:flex;flex-direction:column;gap:9px;}
+.bar-row{display:flex;align-items:center;gap:10px;}
+.bar-lbl{font-size:11px;color:var(--ink-2);flex-shrink:0;}
+.bar-track{flex:1;height:20px;background:var(--bg);border-radius:4px;position:relative;overflow:hidden;}
+.bar-val{font-size:11px;font-weight:600;width:52px;text-align:right;flex-shrink:0;}
+
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3);padding:0 0 10px;text-align:left;border-bottom:1px solid var(--border);}
+.data-table th:not(:first-child){text-align:right;}
+.data-table td{padding:9px 0;border-bottom:1px solid var(--bg);font-size:12px;color:var(--ink);}
+.data-table td:not(:first-child){text-align:right;}
+.data-table tr:last-child td{border-bottom:none;}
+
+.alerts{display:flex;flex-direction:column;gap:8px;}
+.alert-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;font-size:12px;}
+.alert-item.warn{background:var(--gold-bg);}
+.alert-item.danger{background:var(--red-bg);}
+.alert-item.ok{background:var(--green-bg);}
+.alert-item.info{background:var(--blue-bg);}
+.alert-text{color:var(--ink-2);line-height:1.4;}
+.alert-text strong{color:var(--ink);font-weight:600;}
+
+.cliente-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;background:var(--bg);margin-bottom:8px;}
+.cliente-rank{font-family:'Libre Baskerville',serif;font-size:18px;font-weight:700;color:var(--gold);width:22px;flex-shrink:0;}
+.cliente-name{font-size:13px;font-weight:600;color:var(--ink);}
+.cliente-detail{font-size:10px;color:var(--ink-3);margin-top:1px;}
+
+.conv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.conv-card{padding:14px;border-radius:10px;background:var(--bg);border:1px solid var(--border);text-align:center;}
+.conv-name{font-size:11px;color:var(--ink-3);margin-bottom:4px;}
+.conv-pct{font-size:24px;font-weight:700;letter-spacing:-.02em;}
+
+.forecast-block{padding:16px;background:var(--forest);border-radius:10px;color:white;}
+.forecast-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-bottom:4px;}
+.forecast-val{font-size:28px;font-weight:700;letter-spacing:-.02em;color:white;}
+
+.progress-track{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:4px;}
+.progress-fill{height:100%;border-radius:3px;transition:width .6s;}
+
+.sparkline{display:flex;align-items:flex-end;gap:3px;height:40px;}
+.spark-bar{flex:1;border-radius:2px 2px 0 0;transition:height .5s ease;}
+
+.agent-name{font-weight:600;color:var(--ink);}
+.agent-zone{font-size:10px;color:var(--ink-3);margin-top:1px;}
+.target-bar{height:4px;background:var(--bg);border-radius:2px;margin-top:4px;overflow:hidden;}
+.target-fill{height:100%;border-radius:2px;transition:width .6s;}
+
+.dash-footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.footer-brand{font-size:12px;color:var(--ink-3);}
+.footer-brand strong{color:var(--green);font-weight:600;}
+
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .grid-2-1,.grid-3,.grid-2{grid-template-columns:1fr;}
+  .conv-grid{grid-template-columns:repeat(2,1fr);}
+  .main{padding:20px 16px 40px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="v-nav">
+  <a class="v-brand" href="index.html">
+    <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+      <rect width="64" height="64" rx="15" fill="#0f2912"/>
+      <path d="M5 32 C12 18, 52 18, 59 32 C52 46, 12 46, 5 32Z" stroke="#4caf6a" stroke-width="2.5" fill="none" opacity=".5"/>
+      <circle cx="32" cy="32" r="10" stroke="#4caf6a" stroke-width="2" fill="none" opacity=".3"/>
+      <circle cx="32" cy="32" r="4.5" fill="#f5d060"/>
+      <circle cx="29" cy="29" r="1.5" fill="white" opacity=".5"/>
+    </svg>
+    <span class="v-brand-name">VISIBILIA</span>
+  </a>
+  <div class="v-sep"></div>
+  <a class="v-btn" href="dashboard-pmi.html">📈 Direzione</a>
+  <a class="v-btn" href="dashboard-produzione.html">🏭 Produzione</a>
+  <a class="v-btn" href="dashboard-horeca.html">🍽 HORECA</a>
+  <a class="v-btn active" href="dashboard-commerciale.html">💼 Commerciale</a>
+  <a class="v-btn" href="index.html">🏠 Home</a>
+</nav>
+
+<main class="main">
+  <div class="demo-banner">💼 <span><strong>Demo interattiva</strong> — Dati simulati. Cambia periodo e agente per esplorare.</span></div>
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h1 class="page-title">Vendite &amp; <em>Commerciale</em></h1>
+      <p style="font-size:13px;color:var(--ink-3);margin-top:4px;">Distribuzione Meridionale S.r.l. — Rete agenti Sicilia &amp; Calabria</p>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:30px;font-weight:700;color:var(--ink);" id="header-fat">—</div>
+      <div style="font-size:11px;color:var(--ink-3);">fatturato periodo selezionato</div>
+    </div>
+  </div>
+
+  <div class="controls-bar">
+    <div class="controls-left">
+      <span class="ctrl-label">Periodo:</span>
+      <button class="period-btn active" onclick="setPeriod('mese',this)">Questo mese</button>
+      <button class="period-btn" onclick="setPeriod('trimestre',this)">Trimestre</button>
+      <button class="period-btn" onclick="setPeriod('anno',this)">Anno</button>
+      <span class="ctrl-label" style="margin-left:16px;">Agente:</span>
+      <select class="agente-select" onchange="setAgente(this.value)">
+        <option value="all">Tutti gli agenti</option>
+        <option value="A1">Marco Rizzo — Catania</option>
+        <option value="A2">Sara Conti — Palermo</option>
+        <option value="A3">Luca Ferrara — Messina</option>
+        <option value="A4">Anna Bruno — Calabria</option>
+      </select>
+    </div>
+    <div style="font-size:12px;color:var(--ink-3);">Aggiornamento: <strong style="color:var(--ink);" id="last-update">--:--</strong></div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card forest"><div class="kpi-label">Fatturato</div><div class="kpi-value" id="kpi-fat">—<sup>€</sup></div><span class="kpi-delta" id="delta-fat">—</span><div class="kpi-compare">vs stesso periodo</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Ordini chiusi</div><div class="kpi-value" id="kpi-ord">—</div><span class="kpi-delta" id="delta-ord">—</span><div class="kpi-compare">ordini confermati</div></div>
+    <div class="kpi-card gold"><div class="kpi-label">Valore medio ordine</div><div class="kpi-value" id="kpi-vmo">—<sup>€</sup></div><span class="kpi-delta" id="delta-vmo">—</span><div class="kpi-compare">per ordine</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">Tasso conversione</div><div class="kpi-value" id="kpi-conv">—<sup>%</sup></div><span class="kpi-delta" id="delta-conv">—</span><div class="kpi-compare">offerte → ordini</div></div>
+    <div class="kpi-card red"><div class="kpi-label">Clienti a rischio</div><div class="kpi-value" id="kpi-risk">—</div><span class="kpi-delta" id="delta-risk">—</span><div class="kpi-compare">nessun ordine 60gg+</div></div>
+  </div>
+
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Pipeline Commerciale</div><div class="card-sub">Opportunità attive per fase</div></div><span class="card-badge forest" id="badge-pipe">—</span></div>
+      <div class="pipeline" id="pipeline-bar"></div>
+      <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;" id="pipe-legend"></div>
+      <div style="margin-top:16px;" id="pipe-detail"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Alert Commerciali</div><div class="card-sub">Priorità operative</div></div></div>
+      <div class="alerts" id="alerts-com"></div>
+    </div>
+  </div>
+
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Andamento Fatturato</div><div class="card-sub" id="trend-sub">—</div></div><span class="card-badge green" id="badge-trend">—</span></div>
+      <div class="bar-chart" id="trend-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Conversioni per Agente</div><div class="card-sub">% offerte convertite in ordini</div></div></div>
+      <div class="conv-grid" id="conv-grid"></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Top Clienti</div><div class="card-sub">Per fatturato nel periodo</div></div><span class="card-badge green">Top 5</span></div>
+      <div id="clienti-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Prodotti per Fatturato</div><div class="card-sub">Top linee di prodotto</div></div><span class="card-badge gold">5 linee</span></div>
+      <div class="bar-chart" id="prodotti-chart"></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Performance Agenti</div><div class="card-sub">Fatturato vs target</div></div><span class="card-badge forest">4 agenti attivi</span></div>
+      <table class="data-table"><thead><tr><th>Agente</th><th>Fatturato</th><th>Target</th><th>%</th></tr></thead><tbody id="agenti-tbody"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Previsione &amp; Forecast</div><div class="card-sub">Proiezione su trend attuale</div></div><span class="card-badge" id="badge-fc">—</span></div>
+      <div style="display:flex;flex-direction:column;gap:14px;" id="forecast-box"></div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Fatturato per Zona</div><div class="card-sub">Distribuzione geografica</div></div></div>
+      <div class="bar-chart" id="zone-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Stagionalità Vendite</div><div class="card-sub">Trend mensile ultimi 12 mesi</div></div></div>
+      <div class="sparkline" id="stagionalita"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;" id="stag-labels"></div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--green-bg);border-radius:8px;" id="stag-insight"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Clienti Inattivi</div><div class="card-sub">Nessun ordine negli ultimi 60gg</div></div><span class="card-badge red" id="badge-inattivi">—</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px;" id="inattivi-list"></div>
+    </div>
+  </div>
+
+  <div class="dash-footer">
+    <div class="footer-brand">Powered by <strong>Visibilia</strong></div>
+    <div style="font-size:11px;color:var(--ink-3);font-style:italic;">visibilia.dashboardpmi@outlook.it</div>
+  </div>
+</main>
+
+<script>
+var DATA = {
+  all:{
+    mese:{fat:142000,ord:38,vmo:3737,conv:34,risk:5,dFat:'↑ +11,2%',label:'Questo mese'},
+    trimestre:{fat:398000,ord:112,vmo:3554,conv:32,risk:5,dFat:'↑ +8,4%',label:'Trimestre'},
+    anno:{fat:1480000,ord:421,vmo:3515,conv:31,risk:5,dFat:'↑ +14,6%',label:'Anno'}
+  },
+  A1:{
+    mese:{fat:52000,ord:14,vmo:3714,conv:38,risk:2,dFat:'↑ +15,3%',label:'Marco — mese'},
+    trimestre:{fat:148000,ord:42,vmo:3524,conv:36,risk:2,dFat:'↑ +12,1%',label:'Marco — trim.'},
+    anno:{fat:548000,ord:154,vmo:3558,conv:35,risk:2,dFat:'↑ +18,2%',label:'Marco — anno'}
+  },
+  A2:{
+    mese:{fat:38000,ord:10,vmo:3800,conv:29,risk:1,dFat:'↑ +6,8%',label:'Sara — mese'},
+    trimestre:{fat:108000,ord:30,vmo:3600,conv:28,risk:1,dFat:'↑ +5,2%',label:'Sara — trim.'},
+    anno:{fat:401000,ord:112,vmo:3580,conv:27,risk:1,dFat:'↑ +9,4%',label:'Sara — anno'}
+  },
+  A3:{
+    mese:{fat:28000,ord:8,vmo:3500,conv:24,risk:1,dFat:'↓ -2,4%',label:'Luca — mese'},
+    trimestre:{fat:82000,ord:24,vmo:3417,conv:22,risk:1,dFat:'↓ -1,8%',label:'Luca — trim.'},
+    anno:{fat:312000,ord:90,vmo:3467,conv:21,risk:1,dFat:'↓ -3,1%',label:'Luca — anno'}
+  },
+  A4:{
+    mese:{fat:24000,ord:6,vmo:4000,conv:40,risk:1,dFat:'↑ +22,1%',label:'Anna — mese'},
+    trimestre:{fat:60000,ord:16,vmo:3750,conv:38,risk:1,dFat:'↑ +19,4%',label:'Anna — trim.'},
+    anno:{fat:219000,ord:65,vmo:3369,conv:37,risk:1,dFat:'↑ +28,3%',label:'Anna — anno'}
+  }
+};
+var TREND={
+  all:{
+    mese:{labels:['S1','S2','S3','S4'],vals:[32000,38000,34000,38000]},
+    trimestre:{labels:['Gen','Feb','Mar'],vals:[118000,132000,148000]},
+    anno:{labels:['Q1','Q2','Q3','Q4'],vals:[338000,380000,362000,400000]}
+  },
+  A1:{
+    mese:{labels:['S1','S2','S3','S4'],vals:[11000,14000,13000,14000]},
+    trimestre:{labels:['Gen','Feb','Mar'],vals:[44000,50000,54000]},
+    anno:{labels:['Q1','Q2','Q3','Q4'],vals:[124000,138000,130000,156000]}
+  },
+  A2:{
+    mese:{labels:['S1','S2','S3','S4'],vals:[8000,10000,9000,11000]},
+    trimestre:{labels:['Gen','Feb','Mar'],vals:[32000,36000,40000]},
+    anno:{labels:['Q1','Q2','Q3','Q4'],vals:[96000,104000,98000,103000]}
+  },
+  A3:{
+    mese:{labels:['S1','S2','S3','S4'],vals:[7000,8000,6000,7000]},
+    trimestre:{labels:['Gen','Feb','Mar'],vals:[28000,26000,28000]},
+    anno:{labels:['Q1','Q2','Q3','Q4'],vals:[84000,80000,76000,72000]}
+  },
+  A4:{
+    mese:{labels:['S1','S2','S3','S4'],vals:[5000,6000,6000,7000]},
+    trimestre:{labels:['Gen','Feb','Mar'],vals:[16000,20000,24000]},
+    anno:{labels:['Q1','Q2','Q3','Q4'],vals:[34000,58000,58000,69000]}
+  }
+};
+
+var curPeriod='mese', curAgente='all';
+
+function fmtN(n){
+  if(n>=1000000) return (n/1000000).toFixed(2).replace('.',',')+' M';
+  if(n>=1000) return (n/1000).toFixed(0)+'K';
+  return n;
+}
+
+function setKPI(key,val,unit,cls,delta){
+  var ve=document.getElementById('kpi-'+key); if(ve) ve.innerHTML=val+(unit?'<sup>'+unit+'</sup>':'');
+  var de=document.getElementById('delta-'+key); if(de){de.textContent=delta;de.className='kpi-delta '+cls;}
+}
+
+function render(){
+  var d=(DATA[curAgente]||DATA.all)[curPeriod];
+  var t=(TREND[curAgente]||TREND.all)[curPeriod];
+  if(!d) return;
+
+  document.getElementById('header-fat').textContent='€ '+fmtN(d.fat);
+  setKPI('fat',fmtN(d.fat),'€','up',d.dFat);
+  setKPI('ord',d.ord,'','up','↑ +6 vs precedente');
+  setKPI('vmo',d.vmo.toLocaleString('it-IT'),'€','up','↑ +2,1%');
+  setKPI('conv',d.conv,'%',d.conv>=35?'up':'warn',d.conv>=35?'↑ ottimo':'⚠ target 35%');
+  setKPI('risk',d.risk,'',d.risk>3?'down':'warn',d.risk>3?'↑ attenzione':'— monitorare');
+
+  // Pipeline
+  var stages=[
+    {label:'Contatto',val:28,col:'#6a8a6d',euro:84000},
+    {label:'Proposta',val:22,col:'#2d7a3a',euro:110000},
+    {label:'Trattativa',val:18,col:'#1a3d1f',euro:126000},
+    {label:'Chiusura',val:12,col:'#b8860b',euro:108000},
+    {label:'Vinto',val:20,col:'#0d1f0f',euro:140000}
+  ];
+  var totalPipe=stages.reduce(function(a,s){return a+s.euro;},0);
+  document.getElementById('pipeline-bar').innerHTML=stages.map(function(s){return '<div class="pipe-stage" style="flex:'+s.val+';background:'+s.col+';" title="'+s.label+': €'+fmtN(s.euro)+'">'+s.val+'%</div>';}).join('');
+  document.getElementById('badge-pipe').textContent='€'+fmtN(totalPipe)+' pipeline';
+  document.getElementById('pipe-legend').innerHTML=stages.map(function(s){return '<div style="display:flex;align-items:center;gap:4px;"><div style="width:8px;height:8px;background:'+s.col+';border-radius:2px;"></div><span style="font-size:10px;color:var(--ink-3);">'+s.label+'</span></div>';}).join('');
+  document.getElementById('pipe-detail').innerHTML='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"><div style="padding:10px;background:var(--bg);border-radius:8px;text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--forest);">'+(stages[1].val+stages[2].val)+'</div><div style="font-size:10px;color:var(--ink-3);">Opportunità attive</div></div><div style="padding:10px;background:var(--gold-bg);border-radius:8px;text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--gold);">€'+fmtN(stages[2].euro)+'</div><div style="font-size:10px;color:var(--ink-3);">In trattativa</div></div><div style="padding:10px;background:var(--green-bg);border-radius:8px;text-align:center;"><div style="font-size:16px;font-weight:700;color:var(--green);">'+d.conv+'%</div><div style="font-size:10px;color:var(--ink-3);">Tasso chiusura</div></div></div>';
+
+  // Alerts
+  var lukaWarn=curAgente==='A3'||curAgente==='all';
+  document.getElementById('alerts-com').innerHTML=[
+    lukaWarn?'<div class="alert-item warn"><span>📉</span><div class="alert-text"><strong>Luca Ferrara</strong> sotto target del 18%. Zona Messina in difficoltà.</div></div>':'',
+    '<div class="alert-item danger"><span>⏰</span><div class="alert-text"><strong>5 clienti</strong> senza ordini da 60+ giorni. Contatto urgente.</div></div>',
+    '<div class="alert-item ok"><span>🏆</span><div class="alert-text"><strong>Anna Bruno</strong> +22% sul mese — best performer.</div></div>',
+    '<div class="alert-item info"><span>📅</span><div class="alert-text"><strong>3 offerte</strong> in scadenza entro 7 giorni. Follow-up prioritario.</div></div>'
+  ].filter(Boolean).join('');
+
+  // Trend
+  var maxT=Math.max.apply(null,t.vals);
+  var tc=document.getElementById('trend-chart'); tc.innerHTML='';
+  t.labels.forEach(function(l,i){
+    var pct=(t.vals[i]/maxT*100).toFixed(0), isMax=t.vals[i]===maxT;
+    tc.innerHTML+='<div class="bar-row"><span class="bar-lbl" style="width:40px;">'+l+'</span><div class="bar-track"><div style="position:absolute;top:6px;left:0;height:8px;width:'+pct+'%;background:'+(isMax?'var(--gold)':'var(--green)')+';border-radius:4px;transition:width .6s;opacity:'+(isMax?1:.75)+';"></div></div><span class="bar-val" style="color:'+(isMax?'var(--gold)':'var(--green)')+';">€'+fmtN(t.vals[i])+'</span></div>';
+  });
+  document.getElementById('trend-sub').textContent='Andamento per '+curPeriod;
+  document.getElementById('badge-trend').textContent='€'+fmtN(d.fat)+' totale';
+
+  // Conversioni agenti
+  var agenti=[{nome:'Marco R.',conv:38},{nome:'Sara C.',conv:29},{nome:'Luca F.',conv:24},{nome:'Anna B.',conv:40}];
+  document.getElementById('conv-grid').innerHTML=agenti.map(function(a){
+    var col=a.conv>=35?'var(--green)':a.conv>=28?'var(--gold)':'var(--red)';
+    return '<div class="conv-card"><div class="conv-name">'+a.nome+'</div><div class="conv-pct" style="color:'+col+';">'+a.conv+'%</div><div style="font-size:10px;color:var(--ink-3);margin-top:2px;">'+(a.conv>=35?'🏆 ottimo':a.conv>=28?'⚠ medio':'📉 sotto target')+'</div></div>';
+  }).join('');
+
+  // Clienti
+  var clienti=[
+    {nome:'Distribuzione Etna',det:'Catania · 3 anni',val:d.fat*0.22,delta:'+8%',col:'var(--green)'},
+    {nome:'GDO Palermo Est',det:'Palermo · 2 anni',val:d.fat*0.16,delta:'+12%',col:'var(--green)'},
+    {nome:'Horeca Siracusa',det:'Siracusa · 1 anno',val:d.fat*0.12,delta:'+3%',col:'var(--green)'},
+    {nome:'Supermercati Ragusa',det:'Ragusa · 5 anni',val:d.fat*0.10,delta:'-4%',col:'var(--red)'},
+    {nome:'Food Service Reggio',det:'Reggio C. · 2 anni',val:d.fat*0.08,delta:'+18%',col:'var(--green)'}
+  ];
+  document.getElementById('clienti-list').innerHTML=clienti.map(function(c,i){
+    return '<div class="cliente-row"><div class="cliente-rank">'+(i+1)+'</div><div style="flex:1;"><div class="cliente-name">'+c.nome+'</div><div class="cliente-detail">'+c.det+'</div></div><div style="text-align:right;"><div style="font-size:13px;font-weight:700;color:var(--ink);">€'+fmtN(Math.round(c.val))+'</div><div style="font-size:10px;font-weight:500;color:'+c.col+';">'+c.delta+' vs precedente</div></div></div>';
+  }).join('');
+
+  // Prodotti
+  var prods=['Linea Premium','Linea Standard','Accessori','Ricambi','Servizi'];
+  var prodVals=[d.fat*0.38,d.fat*0.28,d.fat*0.16,d.fat*0.11,d.fat*0.07].map(Math.round);
+  var maxP=Math.max.apply(null,prodVals);
+  var pc=document.getElementById('prodotti-chart'); pc.innerHTML='';
+  prods.forEach(function(p,i){
+    var pct=(prodVals[i]/maxP*100).toFixed(0), col=i===0?'var(--forest)':i===1?'var(--green)':'var(--ink-3)';
+    pc.innerHTML+='<div class="bar-row"><span class="bar-lbl" style="width:90px;">'+p+'</span><div class="bar-track"><div style="position:absolute;top:6px;left:0;height:8px;width:'+pct+'%;background:'+col+';border-radius:4px;transition:width .6s;opacity:.85;"></div></div><span class="bar-val">€'+fmtN(prodVals[i])+'</span></div>';
+  });
+
+  // Agenti performance
+  var agentiPerf=[
+    {nome:'Marco Rizzo',zona:'Catania',fat:d.fat*(curAgente==='all'?0.37:1),target:d.fat*(curAgente==='all'?0.35:0.92)},
+    {nome:'Sara Conti',zona:'Palermo',fat:d.fat*(curAgente==='all'?0.27:1),target:d.fat*(curAgente==='all'?0.30:1.05)},
+    {nome:'Luca Ferrara',zona:'Messina',fat:d.fat*(curAgente==='all'?0.20:1),target:d.fat*(curAgente==='all'?0.24:1.18)},
+    {nome:'Anna Bruno',zona:'Calabria',fat:d.fat*(curAgente==='all'?0.17:1),target:d.fat*(curAgente==='all'?0.14:0.80)}
+  ];
+  document.getElementById('agenti-tbody').innerHTML=agentiPerf.map(function(a){
+    var pct=Math.round(a.fat/a.target*100), col=pct>=100?'var(--green)':pct>=85?'var(--gold)':'var(--red)';
+    return '<tr><td><div class="agent-name">'+a.nome+'</div><div class="agent-zone">'+a.zona+'</div></td><td>€'+fmtN(Math.round(a.fat))+'</td><td style="color:var(--ink-3);">€'+fmtN(Math.round(a.target))+'</td><td><span style="font-weight:700;color:'+col+';">'+pct+'%</span><div class="target-bar"><div class="target-fill" style="width:'+Math.min(pct,100)+'%;background:'+col+';"></div></div></td></tr>';
+  }).join('');
+
+  // Forecast
+  var mult=curPeriod==='mese'?12:curPeriod==='trimestre'?4:1;
+  var prevAnno=Math.round(d.fat*mult*1.08);
+  var prevOk=prevAnno>=1600000;
+  document.getElementById('forecast-box').innerHTML=
+    '<div class="forecast-block"><div class="forecast-label">Fatturato annuo previsto</div><div class="forecast-val">€ '+fmtN(prevAnno)+'</div><div style="font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;">Basato su trend +8% YoY</div></div>'+
+    '<div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;color:var(--ink-2);">Obiettivo annuo</span><span style="font-size:13px;font-weight:700;">€ 1.600.000</span></div><div class="progress-track" style="height:8px;"><div class="progress-fill" style="width:'+Math.min(prevAnno/1600000*100,100).toFixed(0)+'%;background:var(--green);"></div></div><div style="font-size:10px;color:var(--ink-3);margin-top:3px;">'+(prevOk?'✓ obiettivo raggiunto':'Mancano €'+fmtN(Math.max(0,1600000-prevAnno)))+'</div></div>'+
+    '<div style="padding:12px;background:var(--green-bg);border-radius:8px;"><div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:3px;">💡 Insight automatico</div><div style="font-size:12px;color:var(--ink-2);line-height:1.5;">Anna Bruno (+22%) è l\'agente con la crescita più alta. Assegnarle più territorio potrebbe sbloccare €80K+ aggiuntivi.</div></div>';
+  document.getElementById('badge-fc').className='card-badge '+(prevOk?'green':'gold');
+  document.getElementById('badge-fc').textContent=prevOk?'In target ✓':'Sotto target';
+
+  // Zone
+  var zone=['Catania & Prov.','Palermo & Prov.','Messina & Prov.','Calabria'];
+  var zVals=[d.fat*0.37,d.fat*0.27,d.fat*0.20,d.fat*0.17].map(Math.round);
+  var maxZ=Math.max.apply(null,zVals);
+  var zc=document.getElementById('zone-chart'); zc.innerHTML='';
+  zone.forEach(function(z,i){
+    var pct=(zVals[i]/maxZ*100).toFixed(0);
+    zc.innerHTML+='<div class="bar-row"><span class="bar-lbl" style="width:100px;">'+z+'</span><div class="bar-track"><div style="position:absolute;top:6px;left:0;height:8px;width:'+pct+'%;background:var(--forest);border-radius:4px;transition:width .6s;opacity:'+(0.4+i*.15)+';"></div></div><span class="bar-val">€'+fmtN(zVals[i])+'</span></div>';
+  });
+
+  // Stagionalità
+  var stagVals=[98,88,112,124,138,152,142,130,128,148,162,158].map(function(v){return v*1000;});
+  var stagMax=Math.max.apply(null,stagVals);
+  var stagMesi=['G','F','M','A','M','G','L','A','S','O','N','D'];
+  var stagEl=document.getElementById('stagionalita'); stagEl.innerHTML='';
+  stagVals.forEach(function(v,i){
+    var h=(v/stagMax*100).toFixed(0), isPeak=v===stagMax;
+    stagEl.innerHTML+='<div class="spark-bar" style="height:'+h+'%;background:'+(isPeak?'var(--gold)':'rgba(26,61,31,.35)')+';"></div>';
+  });
+  document.getElementById('stag-labels').innerHTML=stagMesi.map(function(m){return '<span style="font-size:9px;color:var(--ink-3);">'+m+'</span>';}).join('');
+  document.getElementById('stag-insight').innerHTML='<div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:3px;">📈 Picco novembre</div><div style="font-size:12px;color:var(--ink-2);line-height:1.5;">Nov-Dic rappresentano il 22% del fatturato annuo. Potenziare la rete commerciale da settembre.</div>';
+
+  // Inattivi
+  var inattivi=[
+    {nome:'Ristorante Da Mario',gg:82,val:'€4.200',zona:'Catania'},
+    {nome:'Bar Centrale Enna',gg:74,val:'€2.800',zona:'Enna'},
+    {nome:'Hotel Etna Resort',gg:68,val:'€6.100',zona:'Nicolosi'},
+    {nome:'Pizzeria Vesuvio',gg:63,val:'€1.900',zona:'Palermo'},
+    {nome:'Trattoria Siciliana',gg:61,val:'€3.400',zona:'Messina'}
+  ];
+  document.getElementById('inattivi-list').innerHTML=inattivi.map(function(c){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--red-bg);border-radius:8px;"><div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--ink);">'+c.nome+'</div><div style="font-size:10px;color:var(--ink-3);">'+c.zona+' · ultimo ordine: '+c.val+'</div></div><span style="font-size:11px;font-weight:700;color:var(--red);">'+c.gg+'gg</span></div>';
+  }).join('');
+  document.getElementById('badge-inattivi').textContent=d.risk+' clienti';
+}
+
+function setPeriod(p,btn){
+  curPeriod=p;
+  document.querySelectorAll('.period-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  render();
+}
+
+function setAgente(v){ curAgente=v; render(); }
+
+var now=new Date();
+document.getElementById('last-update').textContent=now.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ristorazione HORECA — Visibilia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --ink:#1c1510; --ink-2:#4a3f35; --ink-3:#8a7a6a;
+  --bg:#f9f5f0; --warm:#f0e8dc; --surface:#fffcf8; --border:#e8ddd0;
+  --gold:#c8922a; --gold-bg:#fef6e8; --gold-dark:#a07018;
+  --red:#c0392b; --red-bg:#fdf0ee;
+  --green:#2d7a4f; --green-bg:#eaf5ef;
+  --blue:#1a5276; --blue-bg:#eaf2f8;
+}
+body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--ink); font-size:14px; line-height:1.5; padding-top:52px; }
+
+/* NAV */
+.v-nav { position:fixed; top:0; left:0; right:0; z-index:9999; background:rgba(8,8,8,.97); backdrop-filter:blur(12px); height:52px; display:flex; align-items:center; padding:0 16px; gap:6px; border-bottom:1px solid rgba(255,255,255,.07); overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.v-brand { display:flex; align-items:center; gap:8px; margin-right:10px; flex-shrink:0; text-decoration:none; }
+.v-brand-name { font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; color:white; letter-spacing:.06em; }
+.v-sep { width:1px; height:20px; background:rgba(255,255,255,.1); margin:0 4px; flex-shrink:0; }
+.v-btn { padding:5px 13px; border-radius:20px; border:1px solid rgba(255,255,255,.1); background:transparent; font-size:12px; font-family:'Inter',sans-serif; color:rgba(255,255,255,.5); cursor:pointer; white-space:nowrap; transition:all .15s; flex-shrink:0; text-decoration:none; display:inline-flex; align-items:center; }
+.v-btn:hover { color:white; border-color:rgba(255,255,255,.3); }
+.v-btn.active { background:rgba(255,255,255,.12); color:white; border-color:rgba(255,255,255,.25); }
+
+/* HEADER */
+.header { background:#1c1510; padding:0 32px; display:flex; align-items:center; justify-content:space-between; height:60px; border-bottom:1px solid rgba(200,146,42,.2); }
+.header-brand { display:flex; align-items:center; gap:12px; }
+.header-logo { width:32px; height:32px; border-radius:6px; background:var(--gold); display:flex; align-items:center; justify-content:center; font-size:16px; }
+.header-name { font-family:'Playfair Display',serif; font-size:15px; color:rgba(255,255,255,.92); font-weight:600; }
+.header-name span { color:rgba(255,255,255,.35); font-style:italic; font-size:13px; margin-left:6px; }
+.live-pill { display:flex; align-items:center; gap:5px; background:rgba(45,122,79,.15); border:1px solid rgba(45,122,79,.3); padding:3px 10px; border-radius:20px; font-size:11px; color:#4caf82; font-weight:500; }
+.live-dot { width:5px; height:5px; background:#4caf82; border-radius:50%; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* MAIN */
+.main { max-width:1320px; margin:0 auto; padding:28px 32px 56px; }
+.demo-banner { background:var(--gold-bg); border:1px solid rgba(200,146,42,.3); border-radius:10px; padding:10px 16px; margin-bottom:24px; display:flex; align-items:center; gap:8px; font-size:12px; color:var(--gold-dark); }
+.page-header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:16px; }
+.page-title { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; color:var(--ink); line-height:1.1; }
+.page-title em { color:var(--gold); font-style:italic; }
+
+/* CONTROLS */
+.controls-bar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:24px; padding:12px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px; }
+.controls-left { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.ctrl-label { font-size:11px; font-weight:600; color:var(--ink-3); text-transform:uppercase; letter-spacing:.07em; margin-right:2px; }
+.period-btn { padding:5px 14px; border-radius:20px; border:1px solid var(--border); background:var(--bg); font-size:12px; font-family:'Inter',sans-serif; color:var(--ink-2); cursor:pointer; transition:all .15s; }
+.period-btn.active { background:#1c1510; color:white; border-color:#1c1510; }
+.turno-select { padding:5px 12px; border-radius:20px; border:1px solid var(--border); background:var(--bg); font-size:12px; font-family:'Inter',sans-serif; color:var(--ink-2); cursor:pointer; outline:none; }
+
+/* KPI */
+.kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:20px; }
+.kpi-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 16px 14px; position:relative; overflow:hidden; transition:box-shadow .2s,transform .2s; animation:fadeIn .3s ease; }
+.kpi-card:hover { box-shadow:0 4px 20px rgba(28,21,16,.08); transform:translateY(-1px); }
+.kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.kpi-card.gold::before { background:var(--gold); }
+.kpi-card.green::before { background:var(--green); }
+.kpi-card.red::before { background:var(--red); }
+.kpi-card.blue::before { background:var(--blue); }
+.kpi-card.night::before { background:#1c1510; }
+.kpi-label { font-size:10px; font-weight:600; color:var(--ink-3); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+.kpi-value { font-size:26px; font-weight:600; color:var(--ink); line-height:1; margin-bottom:6px; letter-spacing:-.02em; }
+.kpi-value sup { font-size:13px; font-weight:400; color:var(--ink-3); vertical-align:super; }
+.kpi-delta { display:inline-flex; align-items:center; gap:3px; font-size:11px; font-weight:500; padding:2px 7px; border-radius:8px; }
+.kpi-delta.up   { color:var(--green); background:var(--green-bg); }
+.kpi-delta.down { color:var(--red);   background:var(--red-bg); }
+.kpi-delta.warn { color:var(--gold-dark); background:var(--gold-bg); }
+.kpi-compare { font-size:10px; color:var(--ink-3); margin-top:3px; }
+
+/* LAYOUT */
+.grid-2-1 { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:16px; }
+.grid-2   { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.grid-3   { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:16px; }
+
+/* CARD */
+.card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; transition:box-shadow .2s; animation:fadeIn .3s ease; }
+.card:hover { box-shadow:0 4px 16px rgba(28,21,16,.06); }
+.card-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px; }
+.card-title { font-family:'Playfair Display',serif; font-size:15px; font-weight:600; color:var(--ink); }
+.card-sub { font-size:11px; color:var(--ink-3); margin-top:2px; }
+.card-badge { font-size:11px; padding:3px 9px; border-radius:8px; font-weight:500; white-space:nowrap; }
+.card-badge.green  { background:var(--green-bg); color:var(--green); }
+.card-badge.red    { background:var(--red-bg);   color:var(--red); }
+.card-badge.gold   { background:var(--gold-bg);  color:var(--gold-dark); }
+.card-badge.blue   { background:var(--blue-bg);  color:var(--blue); }
+.card-badge.night  { background:#1c1510;          color:rgba(255,255,255,.8); }
+
+/* SERALE */
+.serale-bg { background:#1c1510; border-radius:14px; padding:24px; margin-bottom:16px; }
+.serale-title { font-family:'Playfair Display',serif; font-size:20px; color:rgba(255,255,255,.92); font-weight:600; margin-bottom:4px; }
+.serale-sub { font-size:12px; color:rgba(255,255,255,.4); margin-bottom:20px; }
+.serale-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.serale-kpi { padding:14px; border-radius:10px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); }
+.serale-kpi-label { font-size:10px; text-transform:uppercase; letter-spacing:.07em; color:rgba(255,255,255,.35); margin-bottom:4px; }
+.serale-kpi-val { font-size:22px; font-weight:700; color:white; letter-spacing:-.02em; }
+
+/* TAVOLI */
+.tavoli-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+.tavolo { aspect-ratio:1; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:10px; font-weight:600; border:1.5px solid transparent; cursor:default; transition:transform .15s; }
+.tavolo:hover { transform:scale(1.05); }
+.tavolo.occupato   { background:#c0392b; color:white; border-color:#a93226; }
+.tavolo.libero     { background:var(--green-bg); color:var(--green); border-color:#c3e6d0; }
+.tavolo.prenotato  { background:var(--gold-bg); color:var(--gold-dark); border-color:#f5d9a0; }
+.tavolo.pulizia    { background:var(--warm); color:var(--ink-3); border-color:var(--border); }
+.tavolo-num { font-size:14px; font-weight:700; }
+.tavolo-label { font-size:9px; margin-top:2px; opacity:.8; }
+
+/* FC METER */
+.fc-meter { position:relative; height:16px; background:var(--warm); border-radius:8px; overflow:hidden; margin:8px 0 4px; }
+.fc-fill { height:100%; border-radius:8px; transition:width .8s cubic-bezier(.4,0,.2,1); }
+.fc-target { position:absolute; top:0; bottom:0; width:2px; background:rgba(28,21,16,.25); }
+
+/* PIATTI */
+.piatto-row { display:flex; align-items:center; gap:12px; padding:10px 12px; background:var(--warm); border-radius:8px; margin-bottom:8px; }
+.piatto-rank { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--gold); width:24px; flex-shrink:0; }
+.piatto-name { flex:1; font-size:13px; font-weight:500; color:var(--ink); }
+.piatto-sub  { font-size:10px; color:var(--ink-3); margin-top:1px; }
+.piatto-rev { font-size:13px; font-weight:600; color:var(--ink); }
+.piatto-margin { font-size:10px; font-weight:500; }
+
+/* BAR CHART */
+.bar-chart { display:flex; flex-direction:column; gap:9px; }
+.bar-row { display:flex; align-items:center; gap:10px; }
+.bar-lbl { font-size:11px; color:var(--ink-2); flex-shrink:0; }
+.bar-track { flex:1; height:20px; background:var(--warm); border-radius:4px; position:relative; overflow:hidden; }
+.bar-val { font-size:11px; font-weight:500; width:48px; text-align:right; flex-shrink:0; }
+
+/* ALERTS */
+.alerts { display:flex; flex-direction:column; gap:8px; }
+.alert-item { display:flex; align-items:flex-start; gap:10px; padding:10px 12px; border-radius:8px; font-size:12px; }
+.alert-item.warn   { background:var(--gold-bg); }
+.alert-item.danger { background:var(--red-bg); }
+.alert-item.ok     { background:var(--green-bg); }
+.alert-item.info   { background:var(--blue-bg); }
+.alert-text { color:var(--ink-2); line-height:1.4; }
+.alert-text strong { color:var(--ink); font-weight:600; }
+
+/* ORARIO */
+.orario-chart { display:flex; align-items:flex-end; gap:3px; height:56px; }
+.orario-bar { flex:1; border-radius:3px 3px 0 0; position:relative; cursor:default; }
+
+/* PROGRESS */
+.progress-track { height:6px; background:var(--bg); border-radius:3px; overflow:hidden; margin-top:4px; }
+.progress-fill { height:100%; border-radius:3px; transition:width .6s; }
+
+/* FOOTER */
+.dash-footer { margin-top:32px; padding-top:16px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.footer-brand { font-size:12px; color:var(--ink-3); }
+.footer-brand strong { color:var(--gold-dark); font-weight:600; }
+
+@media(max-width:900px) {
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .grid-2-1,.grid-3,.grid-2 { grid-template-columns:1fr; }
+  .serale-kpis { grid-template-columns:repeat(2,1fr); }
+  .main { padding:20px 16px 40px; }
+  .tavoli-grid { grid-template-columns:repeat(4,1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="v-nav">
+  <a class="v-brand" href="index.html">
+    <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+      <rect width="64" height="64" rx="15" fill="#0f2912"/>
+      <path d="M5 32 C12 18, 52 18, 59 32 C52 46, 12 46, 5 32Z" stroke="#4caf6a" stroke-width="2.5" fill="none" opacity=".5"/>
+      <circle cx="32" cy="32" r="10" stroke="#4caf6a" stroke-width="2" fill="none" opacity=".3"/>
+      <circle cx="32" cy="32" r="4.5" fill="#f5d060"/>
+      <circle cx="29" cy="29" r="1.5" fill="white" opacity=".5"/>
+    </svg>
+    <span class="v-brand-name">VISIBILIA</span>
+  </a>
+  <div class="v-sep"></div>
+  <a class="v-btn" href="index.html">🏠 Home</a>
+  <a class="v-btn" href="dashboard-pmi.html">📈 Direzione</a>
+  <a class="v-btn" href="dashboard-produzione.html">🏭 Produzione</a>
+  <a class="v-btn active" href="dashboard-horeca.html">🍽 HORECA</a>
+  <a class="v-btn" href="dashboard-commerciale.html">💼 Commerciale</a>
+</nav>
+
+<main class="main">
+
+  <div class="demo-banner">🍋 <span><strong>Demo interattiva</strong> — Dati simulati. Cambia periodo e turno per esplorare.</span></div>
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Buonasera, <em>Rosario.</em></h1>
+      <p style="font-size:13px;color:var(--ink-3);margin-top:4px;">Catania, Via Etnea 142 — sabato sera · 68 coperti disponibili</p>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:28px;font-weight:700;color:var(--ink);" id="incasso-sera">€ 2.840</div>
+      <div style="font-size:11px;color:var(--ink-3);">incasso serata in corso</div>
+    </div>
+  </div>
+
+  <div class="controls-bar">
+    <div class="controls-left">
+      <span class="ctrl-label">Periodo:</span>
+      <button class="period-btn active" onclick="setPeriodo('oggi',this)">Oggi</button>
+      <button class="period-btn" onclick="setPeriodo('settimana',this)">Settimana</button>
+      <button class="period-btn" onclick="setPeriodo('mese',this)">Mese</button>
+      <button class="period-btn" onclick="setPeriodo('trimestre',this)">Trimestre</button>
+      <span class="ctrl-label" style="margin-left:16px;">Turno:</span>
+      <select class="turno-select" onchange="setTurno(this.value)">
+        <option value="entrambi">Pranzo + Cena</option>
+        <option value="pranzo">Solo Pranzo</option>
+        <option value="cena" selected>Solo Cena</option>
+      </select>
+    </div>
+    <div style="font-size:12px;color:var(--ink-3);">Ultimo aggiornamento: <strong style="color:var(--ink);" id="last-update">--:--</strong></div>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-grid">
+    <div class="kpi-card gold">
+      <div class="kpi-label">Incasso</div>
+      <div class="kpi-value" id="kpi-incasso">—<sup>€</sup></div>
+      <span class="kpi-delta" id="delta-incasso">—</span>
+      <div class="kpi-compare" id="comp-incasso">—</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Coperti</div>
+      <div class="kpi-value" id="kpi-coperti">—</div>
+      <span class="kpi-delta" id="delta-coperti">—</span>
+      <div class="kpi-compare" id="comp-coperti">—</div>
+    </div>
+    <div class="kpi-card blue">
+      <div class="kpi-label">Scontrino medio</div>
+      <div class="kpi-value" id="kpi-scontrino">—<sup>€</sup></div>
+      <span class="kpi-delta" id="delta-scontrino">—</span>
+      <div class="kpi-compare">per persona</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-label">Food Cost</div>
+      <div class="kpi-value" id="kpi-foodcost">—<sup>%</sup></div>
+      <span class="kpi-delta" id="delta-foodcost">—</span>
+      <div class="kpi-compare">target: &lt;30%</div>
+    </div>
+    <div class="kpi-card night">
+      <div class="kpi-label">Margine netto</div>
+      <div class="kpi-value" id="kpi-margine">—<sup>%</sup></div>
+      <span class="kpi-delta" id="delta-margine">—</span>
+      <div class="kpi-compare">dopo tutti i costi</div>
+    </div>
+  </div>
+
+  <!-- SERALE -->
+  <div class="serale-bg">
+    <div class="serale-title">Serata di oggi — in tempo reale</div>
+    <div class="serale-sub" id="serale-sub">Sabato · Servizio cena</div>
+    <div class="serale-kpis" id="serale-kpis"></div>
+  </div>
+
+  <!-- TAVOLI + ALERTS -->
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Stato Tavoli</div><div class="card-sub">Sala principale — aggiornamento real-time</div></div>
+        <span class="card-badge night" id="badge-tavoli">11/15 occupati</span>
+      </div>
+      <div class="tavoli-grid" id="tavoli-grid"></div>
+      <div style="display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;background:#c0392b;border-radius:3px;"></div><span style="font-size:11px;color:var(--ink-3);">Occupato</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;background:var(--green-bg);border:1px solid #c3e6d0;border-radius:3px;"></div><span style="font-size:11px;color:var(--ink-3);">Libero</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;background:var(--gold-bg);border:1px solid #f5d9a0;border-radius:3px;"></div><span style="font-size:11px;color:var(--ink-3);">Prenotato</span></div>
+        <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;background:var(--warm);border:1px solid var(--border);border-radius:3px;"></div><span style="font-size:11px;color:var(--ink-3);">Pulizia</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Alert Gestione</div><div class="card-sub">Situazioni da monitorare</div></div></div>
+      <div class="alerts" id="alerts-box"></div>
+    </div>
+  </div>
+
+  <!-- FOOD COST + TOP PIATTI -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Food Cost per Categoria</div><div class="card-sub">Costo ingredienti / ricavo · target &lt;30%</div></div>
+        <span class="card-badge" id="badge-fc">—</span>
+      </div>
+      <div id="foodcost-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Top Piatti</div><div class="card-sub">Per ricavo e margine</div></div>
+        <span class="card-badge gold">questa settimana</span>
+      </div>
+      <div id="piatti-grid"></div>
+    </div>
+  </div>
+
+  <!-- ANDAMENTO + COSTI -->
+  <div class="grid-2-1">
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Andamento Incassi</div><div class="card-sub" id="andamento-sub">—</div></div>
+        <span class="card-badge gold" id="badge-andamento">—</span>
+      </div>
+      <div class="bar-chart" id="andamento-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Distribuzione Costi</div><div class="card-sub">Struttura spese mensile</div></div></div>
+      <div style="display:flex;flex-direction:column;gap:12px;" id="costi-dist"></div>
+    </div>
+  </div>
+
+  <!-- PREVISIONE + PERSONALE + ORARIO -->
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Previsione Mese</div><div class="card-sub">Proiezione su trend attuale</div></div>
+        <span class="card-badge" id="badge-prev">—</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;" id="prev-box"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Personale</div><div class="card-sub">Costo lavoro vs incasso</div></div>
+        <span class="card-badge blue">oggi in servizio: 8</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;" id="personale-box"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div><div class="card-title">Produttività per Ora</div><div class="card-sub">Incasso orario — turno serale</div></div>
+      </div>
+      <div class="orario-chart" id="orario-chart"></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;" id="orario-labels"></div>
+      <div style="margin-top:14px;padding:10px 12px;background:var(--gold-bg);border-radius:8px;" id="orario-insight"></div>
+    </div>
+  </div>
+
+  <div class="dash-footer">
+    <div class="footer-brand">Powered by <strong>Visibilia</strong></div>
+    <div style="font-size:11px;color:var(--ink-3);font-style:italic;">Collegabile a qualsiasi cassa o gestionale · visibilia.dashboardpmi@outlook.it</div>
+  </div>
+
+</main>
+
+<script>
+var DATA = {
+  oggi: {
+    pranzo:   { incasso:1240, coperti:38, scontrino:32.6, foodcost:28, margine:18, label:'Pranzo oggi' },
+    cena:     { incasso:2840, coperti:62, scontrino:45.8, foodcost:31, margine:22, label:'Cena oggi' },
+    entrambi: { incasso:4080, coperti:100,scontrino:40.8, foodcost:29, margine:20, label:'Oggi totale' }
+  },
+  settimana: {
+    pranzo:   { incasso:7400, coperti:210,scontrino:35.2, foodcost:27, margine:19, label:'Pranzo settimana' },
+    cena:     { incasso:18200,coperti:380,scontrino:47.9, foodcost:30, margine:23, label:'Cena settimana' },
+    entrambi: { incasso:25600,coperti:590,scontrino:43.4, foodcost:29, margine:21, label:'Settimana' }
+  },
+  mese: {
+    pranzo:   { incasso:28400,coperti:820, scontrino:34.6,foodcost:28, margine:18, label:'Pranzo mese' },
+    cena:     { incasso:71200,coperti:1480,scontrino:48.1,foodcost:31, margine:22, label:'Cena mese' },
+    entrambi: { incasso:99600,coperti:2300,scontrino:43.3,foodcost:29, margine:20, label:'Questo mese' }
+  },
+  trimestre: {
+    pranzo:   { incasso:82000, coperti:2400,scontrino:34.2,foodcost:28,margine:18,label:'Pranzo trimestre' },
+    cena:     { incasso:208000,coperti:4200,scontrino:49.5,foodcost:30,margine:23,label:'Cena trimestre' },
+    entrambi: { incasso:290000,coperti:6600,scontrino:43.9,foodcost:29,margine:21,label:'Trimestre' }
+  }
+};
+
+var ANDAMENTO = {
+  oggi: {
+    entrambi: { labels:['12','13','14','19','20','21','22','23'], vals:[280,460,340,180,640,820,740,460] },
+    pranzo:   { labels:['12','13','14','15'], vals:[280,460,340,160] },
+    cena:     { labels:['19','20','21','22','23'], vals:[180,640,820,740,460] }
+  },
+  settimana: {
+    entrambi: { labels:['Lun','Mar','Mer','Gio','Ven','Sab','Dom'], vals:[2800,3100,2900,3400,4200,5800,3400] },
+    pranzo:   { labels:['Lun','Mar','Mer','Gio','Ven','Sab','Dom'], vals:[800,900,850,1000,1200,1600,1050] },
+    cena:     { labels:['Lun','Mar','Mer','Gio','Ven','Sab','Dom'], vals:[2000,2200,2050,2400,3000,4200,2350] }
+  },
+  mese: {
+    entrambi: { labels:['S1','S2','S3','S4'], vals:[22400,25600,24800,26800] },
+    pranzo:   { labels:['S1','S2','S3','S4'], vals:[6400,7200,7000,7800] },
+    cena:     { labels:['S1','S2','S3','S4'], vals:[16000,18400,17800,19000] }
+  },
+  trimestre: {
+    entrambi: { labels:['Gen','Feb','Mar'], vals:[88000,96000,106000] },
+    pranzo:   { labels:['Gen','Feb','Mar'], vals:[26000,28000,28000] },
+    cena:     { labels:['Gen','Feb','Mar'], vals:[62000,68000,78000] }
+  }
+};
+
+var currentPeriodo = 'oggi';
+var currentTurno   = 'cena';
+
+function fmt(n) {
+  return n >= 1000 ? (n/1000).toFixed(1).replace('.',',') + 'K' : n;
+}
+
+function setKPI(id, val, unit, cls, delta, compare) {
+  var ve = document.getElementById('kpi-'+id);
+  if(ve) ve.innerHTML = val + (unit ? '<sup>'+unit+'</sup>' : '');
+  var de = document.getElementById('delta-'+id);
+  if(de){ de.textContent=delta; de.className='kpi-delta '+cls; }
+  var ce = document.getElementById('comp-'+id);
+  if(ce) ce.textContent = compare||'';
+}
+
+function render() {
+  var d = DATA[currentPeriodo][currentTurno];
+  var a = ANDAMENTO[currentPeriodo][currentTurno] || ANDAMENTO[currentPeriodo]['entrambi'];
+  if(!d) return;
+
+  document.getElementById('incasso-sera').textContent = '€ ' + fmt(d.incasso);
+
+  var fcOk = d.foodcost <= 30;
+  setKPI('incasso',  fmt(d.incasso), '€', 'up',   '↑ +8,4%', 'vs stesso periodo');
+  setKPI('coperti',  d.coperti,      '',  d.coperti>50?'up':'warn', d.coperti>50?'↑ sala piena':'⚠ sotto media', 'su 68 disponibili');
+  setKPI('scontrino',d.scontrino,    '€', 'up',   '↑ +3,2%', 'obiettivo: €42');
+  setKPI('foodcost', d.foodcost,     '%', fcOk?'up':'down', fcOk?'✓ in target':'↑ sopra target', 'target: <30%');
+  setKPI('margine',  d.margine,      '%', d.margine>=20?'up':'warn', d.margine>=20?'↑ ottimo':'⚠ migliorabile', 'dopo tutti i costi');
+
+  // Serale
+  document.getElementById('serale-kpis').innerHTML = [
+    {label:'Tavoli occupati', val:'11/15', delta:'73%', col:'#4caf82'},
+    {label:'Coperti serviti',  val:d.coperti, delta:'in corso', col:'rgba(255,255,255,.7)'},
+    {label:'Scontrino medio',  val:'€'+d.scontrino, delta:'+€2 vs ieri', col:'#f0c060'},
+    {label:'Incasso stimato',  val:'€'+fmt(Math.round(d.incasso*1.12)), delta:'proiezione finale', col:'rgba(255,255,255,.5)'}
+  ].map(function(k){
+    return '<div class="serale-kpi"><div class="serale-kpi-label">'+k.label+'</div><div class="serale-kpi-val">'+k.val+'</div><div style="color:'+k.col+';font-size:11px;margin-top:3px;">'+k.delta+'</div></div>';
+  }).join('');
+
+  // Tavoli
+  var tavoli = [
+    {n:1,s:'occupato'},{n:2,s:'occupato'},{n:3,s:'libero'},{n:4,s:'occupato'},{n:5,s:'prenotato'},
+    {n:6,s:'occupato'},{n:7,s:'pulizia'},{n:8,s:'occupato'},{n:9,s:'occupato'},{n:10,s:'libero'},
+    {n:11,s:'prenotato'},{n:12,s:'occupato'},{n:13,s:'libero'},{n:14,s:'occupato'},{n:15,s:'occupato'}
+  ];
+  var labels = {occupato:'Occup.',libero:'Libero',prenotato:'Prenot.',pulizia:'Pulizia'};
+  document.getElementById('tavoli-grid').innerHTML = tavoli.map(function(t){
+    return '<div class="tavolo '+t.s+'"><div class="tavolo-num">'+t.n+'</div><div class="tavolo-label">'+labels[t.s]+'</div></div>';
+  }).join('');
+
+  // Alerts
+  document.getElementById('alerts-box').innerHTML = [
+    d.foodcost > 30 ? '<div class="alert-item danger"><span>🔴</span><div class="alert-text"><strong>Food cost sopra target</strong> ('+d.foodcost+'%). Verificare porzioni e sprechi cucina.</div></div>' : '',
+    '<div class="alert-item warn"><span>🥩</span><div class="alert-text"><strong>Filetto di tonno</strong> — scorta quasi esaurita. Ordinare per domani.</div></div>',
+    '<div class="alert-item ok"><span>✅</span><div class="alert-text"><strong>Scontrino medio</strong> in crescita. Upselling antipasti e dessert funziona.</div></div>',
+    '<div class="alert-item info"><span>📅</span><div class="alert-text"><strong>Domenica</strong> — 42 prenotazioni confermate.</div></div>'
+  ].filter(Boolean).join('');
+
+  // Food cost chart
+  var categorie = ['Pesce/Frutti di mare','Carne','Pasta/Cereali','Verdure','Dolci/Dessert','Bevande'];
+  var fcVals = [38,32,18,22,28,15];
+  var fcBox = document.getElementById('foodcost-chart');
+  fcBox.innerHTML = '';
+  categorie.forEach(function(c,i){
+    var v = fcVals[i];
+    var col = v<=25?'var(--green)':v<=30?'var(--gold)':'var(--red)';
+    fcBox.innerHTML += '<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;color:var(--ink-2);">'+c+'</span><span style="font-size:12px;font-weight:600;color:'+col+';">'+v+'%</span></div><div class="fc-meter"><div class="fc-fill" style="width:'+(v/50*100)+'%;background:'+col+';"></div><div class="fc-target" style="left:'+(30/50*100)+'%;"></div></div><div style="font-size:10px;color:var(--ink-3);">'+(v<=30?'✓ in target':'⚠ sopra soglia')+'</div></div>';
+  });
+  document.getElementById('badge-fc').className = 'card-badge '+(d.foodcost<=30?'green':'red');
+  document.getElementById('badge-fc').textContent = 'Media: '+d.foodcost+'%';
+
+  // Piatti
+  var piatti = [
+    {nome:'Pasta alla Norma',tipo:'Primo piatto',rev:'€ 890',margin:72},
+    {nome:'Tonno alla siciliana',tipo:'Secondo piatto',rev:'€ 1.240',margin:58},
+    {nome:'Arancini misti',tipo:'Antipasto',rev:'€ 620',margin:81},
+    {nome:'Cannoli siciliani',tipo:'Dessert',rev:'€ 480',margin:76},
+    {nome:'Caponata di melanzane',tipo:'Antipasto',rev:'€ 340',margin:85}
+  ];
+  document.getElementById('piatti-grid').innerHTML = piatti.map(function(p,i){
+    return '<div class="piatto-row"><div class="piatto-rank">'+(i+1)+'</div><div style="flex:1;"><div class="piatto-name">'+p.nome+'</div><div class="piatto-sub">'+p.tipo+'</div></div><div style="text-align:right;"><div class="piatto-rev">'+p.rev+'</div><div class="piatto-margin" style="color:var(--green);">Margine: '+p.margin+'%</div></div></div>';
+  }).join('');
+
+  // Andamento
+  var maxA = Math.max.apply(null, a.vals);
+  var ac = document.getElementById('andamento-chart');
+  ac.innerHTML = '';
+  a.labels.forEach(function(l,i){
+    var pct = (a.vals[i]/maxA*100).toFixed(0);
+    var col = a.vals[i]===maxA?'var(--gold)':'var(--blue)';
+    ac.innerHTML += '<div class="bar-row"><span class="bar-lbl" style="width:40px;">'+l+'</span><div class="bar-track"><div style="position:absolute;top:6px;left:0;height:8px;width:'+pct+'%;background:'+col+';border-radius:4px;transition:width .6s;opacity:.85;"></div></div><span class="bar-val" style="color:'+col+';">€'+fmt(a.vals[i])+'</span></div>';
+  });
+  document.getElementById('andamento-sub').textContent = 'Incassi per '+(currentPeriodo==='oggi'?'ora':currentPeriodo);
+  document.getElementById('badge-andamento').textContent = '€'+fmt(d.incasso)+' totale';
+
+  // Costi
+  var costiVoci = [
+    {label:'Personale',  pct:32, col:'var(--blue)'},
+    {label:'Food cost',  pct:d.foodcost, col:d.foodcost<=30?'var(--green)':'var(--red)'},
+    {label:'Affitto',    pct:12, col:'var(--ink-3)'},
+    {label:'Energia',    pct:8,  col:'var(--gold)'},
+    {label:'Altro',      pct:8,  col:'var(--ink-3)'}
+  ];
+  document.getElementById('costi-dist').innerHTML = costiVoci.map(function(c){
+    return '<div><div style="display:flex;justify-content:space-between;"><span style="font-size:12px;color:var(--ink-2);">'+c.label+'</span><span style="font-size:12px;font-weight:600;color:'+c.col+';">'+c.pct+'%</span></div><div class="progress-track"><div class="progress-fill" style="width:'+(c.pct*2.5)+'%;background:'+c.col+';"></div></div></div>';
+  }).join('');
+
+  // Previsione
+  var prevIncasso = Math.round(d.incasso*(currentPeriodo==='oggi'?28:currentPeriodo==='settimana'?4:currentPeriodo==='mese'?1:0.33));
+  var prevOk = prevIncasso >= 100000;
+  document.getElementById('prev-box').innerHTML =
+    '<div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;color:var(--ink-2);">Incasso mensile previsto</span><span style="font-size:14px;font-weight:700;color:var(--ink);">€'+fmt(prevIncasso)+'</span></div><div class="progress-track" style="height:7px;"><div class="progress-fill" style="width:'+(Math.min(prevIncasso/120000*100,100)).toFixed(0)+'%;background:var(--gold);"></div></div><div style="font-size:10px;color:var(--ink-3);margin-top:3px;">Obiettivo: €100.000 '+(prevOk?'✓ raggiunto':'— mancano €'+fmt(100000-prevIncasso))+'</div></div>'+
+    '<div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;color:var(--ink-2);">Margine netto previsto</span><span style="font-size:14px;font-weight:700;color:var(--ink);">'+d.margine+'%</span></div><div class="progress-track" style="height:7px;"><div class="progress-fill" style="width:'+(d.margine*4)+'%;background:var(--green);"></div></div><div style="font-size:10px;color:var(--ink-3);margin-top:3px;">Obiettivo: 20% '+(d.margine>=20?'✓':'⚠')+'</div></div>'+
+    '<div style="padding:12px;background:var(--gold-bg);border-radius:8px;border-left:3px solid var(--gold);"><div style="font-size:11px;font-weight:600;color:var(--gold-dark);margin-bottom:3px;">💡 Insight automatico</div><div style="font-size:12px;color:var(--ink-2);line-height:1.5;">Il <strong>sabato sera</strong> genera il 38% del fatturato settimanale. Ottimizzare il menu per questo turno è la leva più efficace.</div></div>';
+  document.getElementById('badge-prev').className = 'card-badge '+(prevOk?'green':'gold');
+  document.getElementById('badge-prev').textContent = prevOk?'In linea ✓':'Sotto obiettivo';
+
+  // Personale
+  document.getElementById('personale-box').innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div style="padding:12px;background:var(--blue-bg);border-radius:8px;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--blue);">8</div><div style="font-size:10px;color:var(--ink-3);margin-top:2px;">In servizio oggi</div></div><div style="padding:12px;background:var(--gold-bg);border-radius:8px;text-align:center;"><div style="font-size:22px;font-weight:700;color:var(--gold-dark);">32%</div><div style="font-size:10px;color:var(--ink-3);margin-top:2px;">Costo su incasso</div></div></div>'+
+    ['Cucina (4)','Sala (3)','Bar (1)'].map(function(l,i){
+      var vals=['€ 580','€ 390','€ 140'], pcts=[60,40,15];
+      return '<div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-bottom:4px;"><span>'+l+'</span><span style="font-weight:600;">'+vals[i]+'</span></div><div class="progress-track"><div class="progress-fill" style="width:'+pcts[i]+'%;background:var(--blue);"></div></div></div>';
+    }).join('');
+
+  // Orario
+  var oreVals = [180,640,820,780,740,460,220];
+  var oreLabels = ['19','20','21','22','23','24','01'];
+  var maxO = Math.max.apply(null,oreVals);
+  var oc = document.getElementById('orario-chart');
+  oc.innerHTML = '';
+  oreVals.forEach(function(v,i){
+    var h=(v/maxO*100).toFixed(0);
+    var isPeak=v===maxO;
+    oc.innerHTML += '<div class="orario-bar" style="height:'+h+'%;background:'+(isPeak?'var(--gold)':'rgba(200,146,42,.35)')+';"></div>';
+  });
+  document.getElementById('orario-labels').innerHTML = oreLabels.map(function(l){return '<span style="font-size:10px;color:var(--ink-3);">'+l+'</span>';}).join('');
+  document.getElementById('orario-insight').innerHTML = '<div style="font-size:11px;font-weight:600;color:var(--gold-dark);margin-bottom:3px;">💡 Picco ore 21:00</div><div style="font-size:12px;color:var(--ink-2);line-height:1.5;">Il picco di incasso è tra le 21 e le 22. Assicurarsi che il personale sia al completo in quella fascia.</div>';
+}
+
+function setPeriodo(p, btn) {
+  currentPeriodo = p;
+  document.querySelectorAll('.period-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  render();
+}
+
+function setTurno(v) {
+  currentTurno = v;
+  render();
+}
+
+// Init
+var now = new Date();
+document.getElementById('last-update').textContent = now.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+render();
+</script>
+</body>
+</html>
